@@ -3,6 +3,7 @@ package net.turtleboi.turtlerpgclasses.rpg.talents;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class LifeLeechTalent extends Talent {
         double lifeLeechValue = getLifeLeechValue(talentPoints);
 
         applyModifier(player,
-                ModAttributes.LIFE_STEAL.get(),
+                CoreAttributes.LIFE_STEAL.get(),
                 getAttributeName("LifeSteal"),
                 lifeLeechValue,
                 AttributeModifier.Operation.ADDITION);
@@ -41,7 +42,7 @@ public class LifeLeechTalent extends Talent {
     @Override
     public List<Attribute> getRPGAttributes() {
         return List.of(
-                ModAttributes.LIFE_STEAL.get()
+                CoreAttributes.LIFE_STEAL.get()
         );
     }
 

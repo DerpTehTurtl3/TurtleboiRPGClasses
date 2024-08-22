@@ -10,10 +10,11 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.turtleboi.turtlecore.effect.effects.BleedEffect;
+import net.turtleboi.turtlecore.entity.CoreEntities;
+import net.turtleboi.turtlecore.entity.abilities.UnleashFuryEntity;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
-import net.turtleboi.turtlerpgclasses.effect.effects.BleedEffect;
 import net.turtleboi.turtlerpgclasses.entity.ModEntities;
-import net.turtleboi.turtlerpgclasses.entity.abilities.UnleashFuryEntity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +101,7 @@ public class UnleashFuryTalent extends ActiveAbility{
 
     @Override
     public void spawnAbilityEntity(Player player, Level level) {
-        UnleashFuryEntity unleashFuryEntity = new UnleashFuryEntity(ModEntities.UNLEASH_FURY.get(), level);
+        UnleashFuryEntity unleashFuryEntity = new UnleashFuryEntity(CoreEntities.UNLEASH_FURY.get(), level);
         unleashFuryEntity.setOwner(player);
         unleashFuryEntity.setYRot(player.getYRot());
         player.level.addFreshEntity(unleashFuryEntity);

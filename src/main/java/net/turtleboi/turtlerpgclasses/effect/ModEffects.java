@@ -13,12 +13,6 @@ public class ModEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS =
             DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, TurtleRPGClasses.MOD_ID);
 
-    public static final RegistryObject<MobEffect> BLEEDING = MOB_EFFECTS.register("bleeding",
-            () -> new BleedEffect(MobEffectCategory.HARMFUL, 15421520));
-
-    public static final RegistryObject<MobEffect> ROOTED = MOB_EFFECTS.register("rooted",
-            () -> new RootedEffect(MobEffectCategory.HARMFUL, 4928256));
-
     public static final RegistryObject<MobEffect> STEEL_BARBS = MOB_EFFECTS.register("steelbarbs",
             () -> new SteelBarbsEffect(MobEffectCategory.BENEFICIAL, 8231));
 
@@ -42,9 +36,6 @@ public class ModEffects {
 
     public static final RegistryObject<MobEffect> MOMENTUM = MOB_EFFECTS.register("momentum",
             () -> new MomentumEffect(MobEffectCategory.BENEFICIAL, 7995449));
-
-    public static final RegistryObject<MobEffect> STUNNED = MOB_EFFECTS.register("stunned",
-            () -> new StunEffect(MobEffectCategory.HARMFUL, 7456767));
 
     public static final RegistryObject<MobEffect> WARLORDS_PRESENCE = MOB_EFFECTS.register("warlordspresence",
             () -> new WarlordsPresenceEffect(MobEffectCategory.BENEFICIAL, 15355184));

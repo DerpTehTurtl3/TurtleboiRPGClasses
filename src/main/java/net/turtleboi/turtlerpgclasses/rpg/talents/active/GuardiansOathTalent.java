@@ -1,5 +1,6 @@
 package net.turtleboi.turtlerpgclasses.rpg.talents.active;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -9,10 +10,11 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.turtleboi.turtlecore.init.CoreAttributes;
+import net.turtleboi.turtlecore.util.PartyUtils;
 import net.turtleboi.turtlerpgclasses.effect.ModEffects;
 import net.turtleboi.turtlerpgclasses.effect.effects.GuardiansOathEffect;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
-import net.turtleboi.turtlerpgclasses.util.PartyUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,7 +53,7 @@ public class GuardiansOathTalent extends ActiveAbility {
         AABB aabb = new AABB(player.blockPosition()).inflate(radius);
 
         level.getEntitiesOfClass(Player.class, aabb).forEach(ally -> {
-            if (PartyUtils.isAlly(player, ally) || ally == player) {
+            if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player) {
                 if (!ally.hasEffect(ModEffects.GUARDIANS_OATH.get())) {
                     ally.addEffect(new MobEffectInstance(ModEffects.GUARDIANS_OATH.get(), 60, 0));
                 } else {
@@ -67,7 +69,7 @@ public class GuardiansOathTalent extends ActiveAbility {
         AABB aabb = new AABB(player.blockPosition()).inflate(radius);
 
         level.getEntitiesOfClass(Player.class, aabb).forEach(ally -> {
-            if (PartyUtils.isAlly(player, ally) || ally == player) {
+            if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player) {
                 ally.addEffect(new MobEffectInstance(ModEffects.BASTION.get(), getDuration(), 0));
             }
         });
@@ -143,7 +145,7 @@ public class GuardiansOathTalent extends ActiveAbility {
     @Override
     public void applyAttributes(Player player) {
         applyModifier(player,
-                ModAttributes.DAMAGE_RESISTANCE.get(),
+                CoreAttributes.DAMAGE_RESISTANCE.get(),
                 getAttributeName("DamageResistance"),
                 getResistance(),
                 AttributeModifier.Operation.ADDITION);
@@ -153,7 +155,7 @@ public class GuardiansOathTalent extends ActiveAbility {
                 getArmorToughness(),
                 AttributeModifier.Operation.ADDITION);
         applyModifier(player,
-                ModAttributes.HEALING_EFFECTIVENESS.get(),
+                CoreAttributes.HEALING_EFFECTIVENESS.get(),
                 getAttributeName("HealingEffectiveness"),
                 getHealingEffectiveness(),
                 AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -185,12 +187,12 @@ public class GuardiansOathTalent extends ActiveAbility {
                 getArmor(),
                 AttributeModifier.Operation.ADDITION);
         applyEffectModifier(player,
-                ModAttributes.DAMAGE_RESISTANCE.get(),
+                CoreAttributes.DAMAGE_RESISTANCE.get(),
                 getEffectAttributeName("DamageResistance", "bastion"),
                 getBastionDamageResistance(),
                 AttributeModifier.Operation.ADDITION);
         applyEffectModifier(player,
-                ModAttributes.HEALING_EFFECTIVENESS.get(),
+                CoreAttributes.HEALING_EFFECTIVENESS.get(),
                 getEffectAttributeName("HealingEffectiveness", "bastion"),
                 getBastionHealingEffectiveness(),
                 AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -203,8 +205,8 @@ public class GuardiansOathTalent extends ActiveAbility {
                 Attributes.ARMOR_TOUGHNESS,
                 Attributes.KNOCKBACK_RESISTANCE,
                 Attributes.MAX_HEALTH,
-                ModAttributes.DAMAGE_RESISTANCE.get(),
-                ModAttributes.HEALING_EFFECTIVENESS.get()
+                CoreAttributes.DAMAGE_RESISTANCE.get(),
+                CoreAttributes.HEALING_EFFECTIVENESS.get()
         );
     }
 
@@ -212,8 +214,8 @@ public class GuardiansOathTalent extends ActiveAbility {
     public List<Attribute> getRPGEffectAttributes() {
         return Arrays.asList(
                 Attributes.ARMOR,
-                ModAttributes.DAMAGE_RESISTANCE.get(),
-                ModAttributes.HEALING_EFFECTIVENESS.get()
+                CoreAttributes.DAMAGE_RESISTANCE.get(),
+                CoreAttributes.HEALING_EFFECTIVENESS.get()
         );
     }
 }

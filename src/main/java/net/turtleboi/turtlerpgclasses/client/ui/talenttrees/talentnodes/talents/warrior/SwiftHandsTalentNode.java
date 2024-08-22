@@ -12,11 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SwiftHandsTalentNode extends StatTalentButton {
-    private final TalentTree talentTree;
-
     public SwiftHandsTalentNode(TalentTree talentTree, Talent talent, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
         super(talentTree, talent, x, y, maxPoints, requiredPoints, alwaysActive, onPress);
-        this.talentTree = talentTree;
     }
 
     @Override

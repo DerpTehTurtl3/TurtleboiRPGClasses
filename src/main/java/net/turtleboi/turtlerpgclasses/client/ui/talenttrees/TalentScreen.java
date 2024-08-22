@@ -6,6 +6,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.turtleboi.turtlerpgclasses.capabilities.PlayerClassProvider;
+import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
 import net.turtleboi.turtlerpgclasses.client.ClientClassData;
 import net.turtleboi.turtlerpgclasses.client.ui.cooldowns.CooldownOverlay;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.TalentButton;
@@ -40,6 +42,7 @@ public class TalentScreen extends Screen {
 
     public void initializeTalentTrees() {
         Player player = getMinecraft().player;
+        assert player != null;
         int screenWidth = this.width;
         int screenHeight = this.height;
 

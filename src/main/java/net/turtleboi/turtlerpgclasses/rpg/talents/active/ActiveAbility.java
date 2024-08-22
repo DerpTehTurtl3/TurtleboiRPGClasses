@@ -10,7 +10,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.turtleboi.turtlerpgclasses.capabilities.party.PlayerPartyProvider;
+import net.turtleboi.turtlecore.capabilities.party.PlayerPartyProvider;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.capabilities.resources.PlayerResource;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 import net.turtleboi.turtlerpgclasses.rpg.talents.Talent;
@@ -45,7 +46,7 @@ public abstract class ActiveAbility extends Talent {
 
     public double getCooldownProgress(Player player) {
         long remainingTicks = getAbilityCooldownTime(player);
-        double cooldownReduction = player.getAttributeValue(ModAttributes.COOLDOWN_REDUCTION.get());
+        double cooldownReduction = player.getAttributeValue(CoreAttributes.COOLDOWN_REDUCTION.get());
         return Math.min(1.0, remainingTicks / ((getCooldownSeconds() * 20) * (cooldownReduction / 100.0)));
     }
 
@@ -54,7 +55,7 @@ public abstract class ActiveAbility extends Talent {
     }
 
     public void setAbilityOnCooldown(Player player, int baseCooldownTicks) {
-        double cooldownReductionPercentage = player.getAttributeValue(ModAttributes.COOLDOWN_REDUCTION.get()) / 100.0;
+        double cooldownReductionPercentage = player.getAttributeValue(CoreAttributes.COOLDOWN_REDUCTION.get()) / 100.0;
         int adjustedCooldown = (int) (baseCooldownTicks * cooldownReductionPercentage);
         String key = getAbilityKey(player);
         abilityCooldowns.put(key, player.level.getGameTime() + adjustedCooldown);

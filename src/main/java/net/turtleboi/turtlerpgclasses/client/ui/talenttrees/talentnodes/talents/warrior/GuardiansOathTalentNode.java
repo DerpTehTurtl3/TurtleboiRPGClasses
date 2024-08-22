@@ -8,22 +8,17 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.player.Player;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.CapstoneTalentButton;
-import net.turtleboi.turtlerpgclasses.init.ModAttributes;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.rpg.talents.Talent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.active.GuardiansOathTalent;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.WarlordsPresenceTalent;
 
-import java.security.Guard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class GuardiansOathTalentNode extends CapstoneTalentButton {
-    private final TalentTree talentTree;
-
     public GuardiansOathTalentNode(TalentTree talentTree, Talent talent, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
         super(talentTree, talent, x, y, maxPoints, requiredPoints, alwaysActive, onPress);
-        this.talentTree = talentTree;
     }
 
     @Override
@@ -53,7 +48,7 @@ public class GuardiansOathTalentNode extends CapstoneTalentButton {
         double bastionDuration = talent.getBastionHealPerSecond();
 
         assert player != null;
-        double cooldownReduction = player.getAttributeValue(ModAttributes.COOLDOWN_REDUCTION.get());
+        double cooldownReduction = player.getAttributeValue(CoreAttributes.COOLDOWN_REDUCTION.get());
         double baseCooldown = talent.getCooldownSeconds();
         double adjustedCooldown = baseCooldown * (cooldownReduction / 100.0);
 

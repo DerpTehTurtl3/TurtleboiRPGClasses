@@ -8,9 +8,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.turtleboi.turtlecore.entity.CoreEntities;
+import net.turtleboi.turtlecore.entity.abilities.SanctuaryDomeEntity;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.entity.ModEntities;
-import net.turtleboi.turtlerpgclasses.entity.abilities.SanctuaryDomeEntity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +75,7 @@ public class DivineSanctuaryTalent extends ActiveAbility{
 
     @Override
     public void spawnAbilityEntity(Player player, Level level) {
-        SanctuaryDomeEntity domeEntity = new SanctuaryDomeEntity(ModEntities.SANCTUARY_DOME.get(), level);
+        SanctuaryDomeEntity domeEntity = new SanctuaryDomeEntity(CoreEntities.SANCTUARY_DOME.get(), level);
         domeEntity.setOwner(player);
         domeEntity.setPos(player.getX(), player.getY(), player.getZ());
         domeEntity.setYRot(player.getYRot());

@@ -7,6 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.player.Player;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.BarbarianTalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.JuggernautTalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentScreen;
@@ -22,11 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 public class pathOfTheJuggernautSubclassNode extends ActiveTalentButton {
-    private final TalentTree talentTree;
-
     public pathOfTheJuggernautSubclassNode(TalentTree talentTree, Talent talent, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
         super(talentTree, talent, x, y, maxPoints, requiredPoints, alwaysActive, onPress);
-        this.talentTree = talentTree;
     }
 
     @Override
@@ -40,7 +38,7 @@ public class pathOfTheJuggernautSubclassNode extends ActiveTalentButton {
         double durationValue = talent.getDurationSeconds();
 
         assert player != null;
-        double cooldownReduction = player.getAttributeValue(ModAttributes.COOLDOWN_REDUCTION.get());
+        double cooldownReduction = player.getAttributeValue(CoreAttributes.COOLDOWN_REDUCTION.get());
         double baseCooldown = talent.getCooldownSeconds(); // Base cooldown value in seconds
         double adjustedCooldown = baseCooldown * (cooldownReduction / 100.0);
 

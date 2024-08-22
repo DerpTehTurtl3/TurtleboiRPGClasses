@@ -8,12 +8,12 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
+import net.turtleboi.turtlecore.network.CoreNetworking;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStatesProvider;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.TalentButton;
-import net.turtleboi.turtlerpgclasses.network.ModNetworking;
-import net.turtleboi.turtlerpgclasses.network.packet.experience.RemoveExperienceC2SPacket;
-import net.turtleboi.turtlerpgclasses.network.packet.experience.UpdateExperienceC2SPacket;
+import net.turtleboi.turtlecore.network.packet.experience.RemoveExperienceC2SPacket;
+import net.turtleboi.turtlecore.network.packet.experience.UpdateExperienceC2SPacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class TalentPointAllocator {
     }
 
     public void requestExperienceSync() {
-        ModNetworking.sendToServer(new UpdateExperienceC2SPacket());
+        CoreNetworking.sendToServer(new UpdateExperienceC2SPacket());
         //System.out.println("Exp requested");  //debug code
     }
 
@@ -106,7 +106,7 @@ public class TalentPointAllocator {
                 //System.out.println("Current XP: " + currentXP + ", XP Needed: " + xpNeeded);  //debug code
                 if (currentXP >= xpNeeded) {
                     //System.out.println("Confirming purchase of " + pointsToBuy + " points.");  //debug code
-                    ModNetworking.sendToServer(new RemoveExperienceC2SPacket(xpNeeded));
+                    CoreNetworking.sendToServer(new RemoveExperienceC2SPacket(xpNeeded));
                     player.getCapability(TalentStatesProvider.TALENT_STATES).ifPresent(talentStates -> {
                         TalentStates.addPurchasedTalentPoints(pointsToBuy);
 

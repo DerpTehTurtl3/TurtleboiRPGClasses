@@ -1,18 +1,6 @@
 {
   "itemGroup.turtlerpgclassestab": "TurtleBoi's RPG Classes",
 
-  "item.turtlerpgclasses.barbarian_axe": "Axe of the Barbarian",
-  "item.turtlerpgclasses.barbarian_axe.desc": "Unleash the fury of a barbarian",
-  "item.turtlerpgclasses.executioners_axe": "Executioner's Axe",
-  "item.turtlerpgclasses.executioners_axe.desc": "You thirst for the blood of the fallen",
-  "item.turtlerpgclasses.paladin_hammer": "Holy Warhammer",
-  "item.turtlerpgclasses.paladin_hammer.desc": "The light seeks retribution",
-  "item.turtlerpgclasses.juggernaut_helmet": "Juggernaut Helm",
-  "item.turtlerpgclasses.juggernaut_helmet.desc": "An upstoppable force...",
-  "item.turtlerpgclasses.energy_potion": "Energy Potion",
-  "item.turtlerpgclasses.mana_potion": "Mana Potion",
-  "item.turtlerpgclasses.stamina_potion": "Stamina Potion",
-
   "item.minecraft.potion.effect.lesser_energy_potion": "Lesser Energy Potion",
   "item.minecraft.splash_potion.effect.lesser_energy_potion": "Lesser Splash Potion of Energy",
   "item.minecraft.lingering_potion.effect.lesser_energy_potion": "Lesser Lingering Potion of Energy",
@@ -67,8 +55,6 @@
   "key.turtlerpgclasses.active3": "Use Active Ability 3",
   "key.turtlerpgclasses.active4": "Use Active Ability 4",
 
-  "effect.turtlerpgclasses.bleeding": "Bleed",
-  "effect.turtlerpgclasses.rooted": "Rooted",
   "effect.turtlerpgclasses.steelbarbs": "Steel Barbs",
   "effect.turtlerpgclasses.winded": "Winded",
   "effect.turtlerpgclasses.secondwind": "Second Wind",
@@ -77,7 +63,6 @@
   "effect.turtlerpgclasses.brawlerstenacity": "Brawler's Tenacity",
   "effect.turtlerpgclasses.focusedstrikes": "Focused Strikes",
   "effect.turtlerpgclasses.momentum": "Momentum",
-  "effect.turtlerpgclasses.stunned": "Stunned",
   "effect.turtlerpgclasses.warlordspresence": "Warlord's Presence",
   "effect.turtlerpgclasses.guardiansoath": "Guardian's Oath",
   "effect.turtlerpgclasses.rally": "Rally",

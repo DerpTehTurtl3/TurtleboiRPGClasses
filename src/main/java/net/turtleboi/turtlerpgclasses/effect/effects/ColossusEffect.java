@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 import net.turtleboi.turtlerpgclasses.rpg.talents.active.ColossusTalent;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public class ColossusEffect extends MobEffect {
                     .map(MobEffectInstance::getEffect)
                     .filter(effect -> effect.getCategory() == MobEffectCategory.HARMFUL)
                     .forEach(player::removeEffect);
-            double currentSize = player.getAttributeValue(ModAttributes.PLAYER_SIZE.get());
+            double currentSize = player.getAttributeValue(CoreAttributes.PLAYER_SIZE.get());
             int remainingTicks = entity.getEffect(this).getDuration();
             double sizeIncrement = (targetSize - 1) / growTicks;
 
@@ -46,11 +47,11 @@ public class ColossusEffect extends MobEffect {
     }
 
     private void updatePlayerSize(Player player, double newSize) {
-        AttributeModifier existingModifier = player.getAttribute(ModAttributes.PLAYER_SIZE.get()).getModifier(sizeModifierUUID);
+        AttributeModifier existingModifier = player.getAttribute(CoreAttributes.PLAYER_SIZE.get()).getModifier(sizeModifierUUID);
         if (existingModifier != null) {
-            player.getAttribute(ModAttributes.PLAYER_SIZE.get()).removeModifier(existingModifier);
+            player.getAttribute(CoreAttributes.PLAYER_SIZE.get()).removeModifier(existingModifier);
         }
-        player.getAttribute(ModAttributes.PLAYER_SIZE.get()).addTransientModifier(
+        player.getAttribute(CoreAttributes.PLAYER_SIZE.get()).addTransientModifier(
                 new AttributeModifier(sizeModifierUUID, "Colossus_Size", newSize - 1, AttributeModifier.Operation.ADDITION)
         );
     }
@@ -59,7 +60,7 @@ public class ColossusEffect extends MobEffect {
     public void removeAttributeModifiers(@NotNull LivingEntity entity, @NotNull AttributeMap attributeMap, int amplifier) {
         super.removeAttributeModifiers(entity, attributeMap, amplifier);
         if (entity instanceof Player player) {
-            player.getAttribute(ModAttributes.PLAYER_SIZE.get()).removeModifier(sizeModifierUUID);
+            player.getAttribute(CoreAttributes.PLAYER_SIZE.get()).removeModifier(sizeModifierUUID);
             new ColossusTalent().removeEffectModifier(player, "colossus");
         }
     }

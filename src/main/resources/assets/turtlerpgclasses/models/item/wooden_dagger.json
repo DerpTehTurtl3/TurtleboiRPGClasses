@@ -1,0 +1,30 @@
+{
+  "parent": "item/handheld",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "turtlerpgclasses:item/3d/wooden_dagger"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "turtlerpgclasses:item/2d/wooden_dagger"
+    },
+    "ground": {
+      "parent": "turtlerpgclasses:item/2d/wooden_dagger"
+    },
+    "fixed": {
+      "parent": "turtlerpgclasses:item/2d/wooden_dagger"
+    },
+    "thirdperson_righthand": {
+      "parent": "turtlerpgclasses:item/3d/wooden_dagger"
+    },
+    "thirdperson_lefthand": {
+      "parent": "turtlerpgclasses:item/3d/wooden_dagger"
+    },
+    "firstperson_righthand": {
+      "parent": "turtlerpgclasses:item/3d/wooden_dagger"
+    },
+    "firstperson_lefthand": {
+      "parent": "turtlerpgclasses:item/3d/wooden_dagger"
+    }
+  }
+}

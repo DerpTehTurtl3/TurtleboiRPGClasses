@@ -9,9 +9,6 @@ import net.minecraftforge.network.NetworkDirection;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.network.packet.*;
 import net.turtleboi.turtlerpgclasses.network.packet.abilities.*;
-import net.turtleboi.turtlerpgclasses.network.packet.experience.RemoveExperienceC2SPacket;
-import net.turtleboi.turtlerpgclasses.network.packet.experience.SyncExperienceS2CPacket;
-import net.turtleboi.turtlerpgclasses.network.packet.experience.UpdateExperienceC2SPacket;
 import net.turtleboi.turtlerpgclasses.network.packet.resources.PlayerResourcesS2CPacket;
 
 public class ModNetworking {
@@ -100,24 +97,6 @@ public class ModNetworking {
                 .decoder(ExecuteC2SPacket::new)
                 .encoder(ExecuteC2SPacket::toBytes)
                 .consumerMainThread(ExecuteC2SPacket::handle)
-                .add();
-
-        net.messageBuilder(RemoveExperienceC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(RemoveExperienceC2SPacket::new)
-                .encoder(RemoveExperienceC2SPacket::toBytes)
-                .consumerMainThread(RemoveExperienceC2SPacket::handle)
-                .add();
-
-        net.messageBuilder(SyncExperienceS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(SyncExperienceS2CPacket::new)
-                .encoder(SyncExperienceS2CPacket::toBytes)
-                .consumerMainThread(SyncExperienceS2CPacket::handle)
-                .add();
-
-        net.messageBuilder(UpdateExperienceC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(UpdateExperienceC2SPacket::new)
-                .encoder(UpdateExperienceC2SPacket::toBytes)
-                .consumerMainThread(UpdateExperienceC2SPacket::handle)
                 .add();
 
         net.messageBuilder(WrathOfTheWarlordC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)

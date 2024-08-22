@@ -7,6 +7,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.effect.ModEffects;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 
@@ -39,7 +40,7 @@ public class ColossusTalent extends ActiveAbility{
                 getAttack(),
                 AttributeModifier.Operation.MULTIPLY_TOTAL);
         applyEffectModifier(player,
-                ModAttributes.DAMAGE_RESISTANCE.get(),
+                CoreAttributes.DAMAGE_RESISTANCE.get(),
                 getEffectAttributeName("DamageResistance", "colossus"),
                 getDamageResistance(),
                 AttributeModifier.Operation.ADDITION);
@@ -54,7 +55,7 @@ public class ColossusTalent extends ActiveAbility{
     public List<Attribute> getRPGEffectAttributes() {
         return Arrays.asList(
                 Attributes.ATTACK_DAMAGE,
-                ModAttributes.DAMAGE_RESISTANCE.get()
+                CoreAttributes.DAMAGE_RESISTANCE.get()
         );
     }
 

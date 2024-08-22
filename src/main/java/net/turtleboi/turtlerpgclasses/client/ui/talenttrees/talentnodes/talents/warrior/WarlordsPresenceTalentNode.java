@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.player.Player;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.CapstoneTalentButton;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
@@ -19,11 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 public class WarlordsPresenceTalentNode extends CapstoneTalentButton {
-    private final TalentTree talentTree;
-
     public WarlordsPresenceTalentNode(TalentTree talentTree, Talent talent, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
         super(talentTree, talent, x, y, maxPoints, requiredPoints, alwaysActive, onPress);
-        this.talentTree = talentTree;
     }
 
     @Override
@@ -49,7 +47,7 @@ public class WarlordsPresenceTalentNode extends CapstoneTalentButton {
         double wrathDuration = talent.getDurationSeconds();
 
         assert player != null;
-        double cooldownReduction = player.getAttributeValue(ModAttributes.COOLDOWN_REDUCTION.get());
+        double cooldownReduction = player.getAttributeValue(CoreAttributes.COOLDOWN_REDUCTION.get());
         double baseCooldown = talent.getCooldownSeconds();
         double adjustedCooldown = baseCooldown * (cooldownReduction / 100.0);
 

@@ -5,6 +5,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 import net.turtleboi.turtlerpgclasses.rpg.talents.Talent;
 
@@ -34,7 +35,7 @@ public class Ranger extends Talent {
                 AttributeModifier.Operation.MULTIPLY_BASE);
 
         applyModifier(player,
-                ModAttributes.RANGED_DAMAGE.get(),
+                CoreAttributes.RANGED_DAMAGE.get(),
                 getAttributeName("RangedDamage"),
                 3.0,
                 AttributeModifier.Operation.ADDITION);
@@ -50,7 +51,7 @@ public class Ranger extends Talent {
         return Arrays.asList(
                 Attributes.MOVEMENT_SPEED,
                 Attributes.ATTACK_SPEED,
-                ModAttributes.RANGED_DAMAGE.get()
+                CoreAttributes.RANGED_DAMAGE.get()
         );
     }
 

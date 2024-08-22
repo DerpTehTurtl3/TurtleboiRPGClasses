@@ -7,14 +7,13 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.turtleboi.turtlecore.client.render.ArrowRenderer;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
-import net.turtleboi.turtlerpgclasses.client.ClientClassData;
-import net.turtleboi.turtlerpgclasses.client.render.ArrowRenderer;
 import net.turtleboi.turtlerpgclasses.client.render.AuraRenderer;
 import net.turtleboi.turtlerpgclasses.client.ui.ClassSelectionScreen;
 import net.turtleboi.turtlerpgclasses.client.ui.cooldowns.CooldownOverlay;
@@ -94,14 +93,7 @@ public class ClientEvents {
 
         @SubscribeEvent
         public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
-            Player player = event.getEntity();
-            PoseStack poseStack = event.getPoseStack();
-            float scale = (float) player.getAttributeValue(ModAttributes.PLAYER_SIZE.get());
 
-            if (scale != 1.0F) {
-                poseStack.pushPose();
-                poseStack.scale(scale, scale, scale);
-            }
         }
 
         @SubscribeEvent
@@ -110,11 +102,6 @@ public class ClientEvents {
             Player player = event.getEntity();
             PoseStack poseStack = event.getPoseStack();
             MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
-            float scale = (float) player.getAttributeValue(ModAttributes.PLAYER_SIZE.get());
-
-            if (scale != 1.0F) {
-                poseStack.popPose();
-            }
 
             if (new WarlordsPresenceTalent().isActive(player)) {
                 AuraRenderer.renderAura(player, poseStack, event.getPartialTick(), 2);
@@ -144,17 +131,6 @@ public class ClientEvents {
                         ResourceOverlay.initializeResourceBars();
                     }
                 }
-            }
-        }
-
-        @SubscribeEvent
-        public static void onRenderLevelStage(RenderLevelStageEvent event) {
-            Minecraft minecraft = Minecraft.getInstance();
-            Player player = minecraft.player;
-            PoseStack poseStack = event.getPoseStack();
-
-            if (player != null && event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-                ArrowRenderer.renderTargetArrow(player, poseStack);
             }
         }
     }

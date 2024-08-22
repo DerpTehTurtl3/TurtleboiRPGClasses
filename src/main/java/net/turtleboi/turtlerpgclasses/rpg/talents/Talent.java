@@ -6,12 +6,12 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.turtleboi.turtlecore.util.StringUtils;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.PlayerAbilityProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStatesProvider;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.TalentButton;
-import net.turtleboi.turtlerpgclasses.util.StringUtils;
 
 import java.util.*;
 
@@ -20,7 +20,7 @@ public abstract class Talent {
     public abstract String getName();
 
     public String getTalentName() {
-        return "warrior" + StringUtils.sanitizeString(getName()) + "Talent";
+        return StringUtils.sanitizeString(getName()) + "Talent";
     }
 
     private UUID getTalentUUID(Player player) {
@@ -100,7 +100,6 @@ public abstract class Talent {
             attributeInstance.addTransientModifier(newModifier);
         }
     }
-
 
     public abstract void applyAttributes(Player player);
 

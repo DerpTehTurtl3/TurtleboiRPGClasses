@@ -17,12 +17,10 @@ import java.util.Optional;
 
 public class CapstoneTalentButton extends TalentButton{
     private static final ResourceLocation TALENT_TREE_TEXTURES = new ResourceLocation(TurtleRPGClasses.MOD_ID, "textures/gui/talents/talent_widgets.png");
-    private final TalentTree talentTree;
     private final Talent talent;
 
     public CapstoneTalentButton(TalentTree talentTree, Talent talent, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
         super(talentTree, talent.getTalentName(), x, y, 26, 26, maxPoints,  requiredPoints, Component.empty(), alwaysActive, onPress);
-        this.talentTree = talentTree;
         this.talent = talent;
         this.maxPoints = maxPoints;
     }

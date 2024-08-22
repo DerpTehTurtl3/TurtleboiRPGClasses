@@ -21,9 +21,13 @@ public class ResourceOverlay {
         Font font = minecraft.font;
 
         if (player == null) return;
-        initializeResourceBars();
+        if (mainResourceBar == null || secondaryResourceBar == null) {
+            initializeResourceBars();
+        }
 
-        mainResourceBar.render(poseStack, font);
+        if (mainResourceBar != null) {
+            mainResourceBar.render(poseStack, font);
+        }
         if (secondaryResourceBar != null) {
             secondaryResourceBar.render(poseStack, font);
         }

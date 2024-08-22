@@ -1,20 +1,17 @@
 package net.turtleboi.turtlerpgclasses.effect.effects;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import net.turtleboi.turtlerpgclasses.effect.ModEffects;
+import net.turtleboi.turtlecore.util.PartyUtils;
 import net.turtleboi.turtlerpgclasses.rpg.talents.active.GuardiansOathTalent;
-import net.turtleboi.turtlerpgclasses.util.PartyUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -58,7 +55,7 @@ public class BastionEffect extends MobEffect {
         AABB aabb = new AABB(player.blockPosition()).inflate(radius);
         for (LivingEntity entity : player.level.getEntitiesOfClass(LivingEntity.class, aabb)) {
             MobCategory category = entity.getType().getCategory();
-            if (entity != player && !(entity instanceof Player && PartyUtils.isAlly(player, (Player) entity)) && !isAllowedCategory(category)) {
+            if (entity != player && !(entity instanceof Player && PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) entity)) && !isAllowedCategory(category)) {
                 entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 20, 2));
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 1));
             }

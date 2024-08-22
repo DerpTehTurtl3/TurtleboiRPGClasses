@@ -19,8 +19,8 @@ public abstract class TalentButton extends Button {
     private final TalentTree talentTree;
     public int getCurrentPoints = getCurrentPoints();
     private final int originalY;
-    private List<TalentButton> children = new ArrayList<>();
-    private List<TalentButton> parents = new ArrayList<>();
+    private final List<TalentButton> children = new ArrayList<>();
+    private final List<TalentButton> parents = new ArrayList<>();
     private List<TalentButton> buttonsToLock = new ArrayList<>();
     private List<Component> tooltipText;
     private TalentState state;
@@ -28,7 +28,6 @@ public abstract class TalentButton extends Button {
     private int currentPoints = 0;
     public int maxPoints;
     public int requiredPoints;
-    private boolean showPoints;
     private final boolean alwaysActive;
 
     public TalentButton(TalentTree talentTree, String identifier, int x, int y, int width, int height, int maxPoints, int requiredPoints, Component title, boolean alwaysActive, OnPress onPress) {
@@ -130,7 +129,7 @@ public abstract class TalentButton extends Button {
         if (player != null) {
             LazyOptional<TalentStates> talentStatesLazyOptional = player.getCapability(TalentStatesProvider.TALENT_STATES);
             talentStatesLazyOptional.ifPresent(talentStates -> {
-                int purchasedPoints = talentStates.getPurchasedTalentPoints();
+                int purchasedPoints = TalentStates.getPurchasedTalentPoints();
                 for (TalentButton parent : getParents()) {
                     if (parent.getState() == TalentState.ACTIVE) {
                         isActiveParentPresent.set(true);
@@ -142,14 +141,14 @@ public abstract class TalentButton extends Button {
                     if (this.getState() != TalentState.ACTIVE && this.getState() != TalentState.UNIQUE_LOCKED && purchasedPoints >= requiredPoints) {
                         unlockOtherButtons();
                         this.setState(TalentState.UNLOCKED);
-                        talentStates.setState(this.getIdentifier(), TalentState.UNLOCKED);
+                        TalentStates.setState(this.getIdentifier(), TalentState.UNLOCKED);
                     }
                 } else {
                     if (this.getState() != TalentState.LOCKED && this.getState() != TalentState.UNIQUE_LOCKED) {
                         this.setState(TalentState.LOCKED);
-                        talentStates.setState(this.getIdentifier(), TalentState.LOCKED);
+                        TalentStates.setState(this.getIdentifier(), TalentState.LOCKED);
                         setCurrentPoints(0);
-                        talentStates.setPoints(this.getIdentifier(), 0);
+                        TalentStates.setPoints(this.getIdentifier(), 0);
                     }
                 }
             });
@@ -166,17 +165,17 @@ public abstract class TalentButton extends Button {
         if (player != null) {
             LazyOptional<TalentStates> talentStatesLazyOptional = player.getCapability(TalentStatesProvider.TALENT_STATES);
             talentStatesLazyOptional.ifPresent(talentStates -> {
-                int purchasedPoints = talentStates.getPurchasedTalentPoints();
-                int spentPoints = talentStates.getTotalSpentTalentPoints();
+                int purchasedPoints = TalentStates.getPurchasedTalentPoints();
+                int spentPoints = TalentStates.getTotalSpentTalentPoints();
                 if (purchasedPoints != 0 && spentPoints <= (purchasedPoints - 1) && purchasedPoints >= requiredPoints) {
                     if (this.getState() == TalentState.UNLOCKED) {
                         this.setState(TalentState.ACTIVE);
-                        talentStates.setState(this.getIdentifier(), TalentState.ACTIVE);
+                        TalentStates.setState(this.getIdentifier(), TalentState.ACTIVE);
                         lockOtherButtons();
                     }
                     if (this.getState() == TalentState.ACTIVE && currentPoints < maxPoints) {
                         setCurrentPoints(currentPoints + 1);
-                        talentStates.setPoints(this.getIdentifier(), this.currentPoints);
+                        TalentStates.setPoints(this.getIdentifier(), this.currentPoints);
                     }
                 }
             });
@@ -191,10 +190,10 @@ public abstract class TalentButton extends Button {
             talentStatesLazyOptional.ifPresent(talentStates -> {
                 if (this.getState() == TalentState.ACTIVE && currentPoints > 0) {
                     setCurrentPoints(currentPoints - 1);
-                    talentStates.setPoints(this.getIdentifier(), this.currentPoints);
+                    TalentStates.setPoints(this.getIdentifier(), this.currentPoints);
                     if (currentPoints == 0) {
                         this.setState(TalentState.UNLOCKED);
-                        talentStates.setState(this.getIdentifier(), TalentState.UNLOCKED);
+                        TalentStates.setState(this.getIdentifier(), TalentState.UNLOCKED);
                     }
                     unlockOtherButtons();
                 }
@@ -212,7 +211,7 @@ public abstract class TalentButton extends Button {
                     if (player != null) {
                         LazyOptional<TalentStates> talentStatesLazyOptional = player.getCapability(TalentStatesProvider.TALENT_STATES);
                         talentStatesLazyOptional.ifPresent(talentStates -> {
-                            talentStates.setState(buttonToLock.getIdentifier(), TalentState.UNIQUE_LOCKED);
+                            TalentStates.setState(buttonToLock.getIdentifier(), TalentState.UNIQUE_LOCKED);
                         });
                     }
                 }
@@ -239,7 +238,7 @@ public abstract class TalentButton extends Button {
                             if (player != null) {
                                 LazyOptional<TalentStates> talentStatesLazyOptional = player.getCapability(TalentStatesProvider.TALENT_STATES);
                                 talentStatesLazyOptional.ifPresent(talentStates -> {
-                                    talentStates.setState(buttonToUnlock.getIdentifier(), TalentState.UNLOCKED);
+                                    TalentStates.setState(buttonToUnlock.getIdentifier(), TalentState.UNLOCKED);
                                 });
                             }
                         }
@@ -250,9 +249,9 @@ public abstract class TalentButton extends Button {
                             if (player != null) {
                                 LazyOptional<TalentStates> talentStatesLazyOptional = player.getCapability(TalentStatesProvider.TALENT_STATES);
                                 talentStatesLazyOptional.ifPresent(talentStates -> {
-                                    talentStates.setState(buttonToUnlock.getIdentifier(), TalentState.LOCKED);
+                                    TalentStates.setState(buttonToUnlock.getIdentifier(), TalentState.LOCKED);
                                     buttonToUnlock.setCurrentPoints(0);
-                                    talentStates.setPoints(this.getIdentifier(), 0);
+                                    TalentStates.setPoints(this.getIdentifier(), 0);
                                 });
                             }
                         }

@@ -1,5 +1,6 @@
 package net.turtleboi.turtlerpgclasses.rpg.talents.active;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -9,10 +10,11 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.turtleboi.turtlecore.init.CoreAttributes;
+import net.turtleboi.turtlecore.util.PartyUtils;
 import net.turtleboi.turtlerpgclasses.effect.ModEffects;
 import net.turtleboi.turtlerpgclasses.effect.effects.WarlordsPresenceEffect;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
-import net.turtleboi.turtlerpgclasses.util.PartyUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,7 +48,7 @@ public class WarlordsPresenceTalent extends ActiveAbility {
         AABB aabb = new AABB(player.blockPosition()).inflate(getWrathRadius());
         int rallyDuration = (int) getRallyDuration() * 20;
         level.getEntitiesOfClass(Player.class, aabb).forEach(ally -> {
-            if (PartyUtils.isAlly(player, ally) || ally == player) {
+            if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player) {
                 if (!ally.hasEffect(ModEffects.RALLY.get())) {
                     ally.addEffect(new MobEffectInstance(ModEffects.RALLY.get(), rallyDuration, 0));
                 }
@@ -68,7 +70,7 @@ public class WarlordsPresenceTalent extends ActiveAbility {
         AABB aabb = new AABB(player.blockPosition()).inflate(getWarlordsRadius());
 
         level.getEntitiesOfClass(Player.class, aabb).forEach(ally -> {
-            if (PartyUtils.isAlly(player, ally) || ally == player) {
+            if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player) {
                 if (!ally.hasEffect(ModEffects.WARLORDS_PRESENCE.get())) {
                     ally.addEffect(new MobEffectInstance(ModEffects.WARLORDS_PRESENCE.get(), 20*3, 0));
                 } else {
@@ -143,12 +145,12 @@ public class WarlordsPresenceTalent extends ActiveAbility {
                 getAttackDamage(),
                 AttributeModifier.Operation.ADDITION);
         applyModifier(player,
-                ModAttributes.CRITICAL_CHANCE.get(),
+                CoreAttributes.CRITICAL_CHANCE.get(),
                 getAttributeName("CriticalChance"),
                 getCriticalChance(),
                 AttributeModifier.Operation.ADDITION);
         applyModifier(player,
-                ModAttributes.CRITICAL_DAMAGE.get(),
+                CoreAttributes.CRITICAL_DAMAGE.get(),
                 getAttributeName("CriticalDamage"),
                 getCriticalDamage(),
                 AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -197,8 +199,8 @@ public class WarlordsPresenceTalent extends ActiveAbility {
                 Attributes.ATTACK_DAMAGE,
                 Attributes.MOVEMENT_SPEED,
                 Attributes.MAX_HEALTH,
-                ModAttributes.CRITICAL_CHANCE.get(),
-                ModAttributes.CRITICAL_DAMAGE.get()
+                CoreAttributes.CRITICAL_CHANCE.get(),
+                CoreAttributes.CRITICAL_DAMAGE.get()
         );
     }
 

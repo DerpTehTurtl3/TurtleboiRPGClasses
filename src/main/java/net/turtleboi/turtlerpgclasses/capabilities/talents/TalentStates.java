@@ -68,12 +68,30 @@ public class TalentStates {
         new ExecuteTalent().resetTalent(player);
         new WarlordsPresenceTalent().resetTalent(player);
         new GuardiansOathTalent().resetTalent(player);
+        clearStates();
+        clearPoints();
     }
 
     public void copyFrom(TalentStates source) {
         this.states = new HashMap<>(source.states);
         this.points = new HashMap<>(source.points);
         this.purchasedPoints = source.purchasedPoints;
+    }
+
+    public static void clearStates() {
+        states.clear();
+    }
+
+    public static void clearPrefixStates(String prefix) {
+        states.entrySet().removeIf(entry -> entry.getKey().startsWith(prefix));
+    }
+
+    public static void clearPoints() {
+        points.clear();
+    }
+
+    public static void clearPrefixPoints(String prefix) {
+        points.entrySet().removeIf(entry -> entry.getKey().startsWith(prefix));
     }
 
     public static void addPurchasedTalentPoints(int pointsValue) {
@@ -89,11 +107,17 @@ public class TalentStates {
     }
 
     public static int getTotalSpentTalentPoints() {
+        // debug code
+        //points.entrySet().stream()
+        //        .filter(entry -> !isTalentAlwaysActive(entry.getKey()))
+        //        .forEach(entry -> {
+        //            System.out.println("Talent: " + entry.getKey() + ", Points: " + entry.getValue());
         return points.entrySet().stream()
                 .filter(entry -> !isTalentAlwaysActive(entry.getKey()))
                 .mapToInt(Map.Entry::getValue)
                 .sum();
     }
+
 
     private static boolean isTalentAlwaysActive(String identifier) {
         TalentButton button = talentButtonRegistry.get(identifier);

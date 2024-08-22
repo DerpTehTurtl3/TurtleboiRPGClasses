@@ -3,6 +3,7 @@ package net.turtleboi.turtlerpgclasses.rpg.attributes;
 import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.common.Mod;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.capabilities.PlayerClassProvider;
 import net.turtleboi.turtlerpgclasses.effect.ModEffects;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
@@ -152,18 +153,18 @@ public class ClassAttributeManager {
             Attributes.ARMOR,
             Attributes.ARMOR_TOUGHNESS,
             Attributes.KNOCKBACK_RESISTANCE,
-            ModAttributes.RANGED_DAMAGE.get(),
+            CoreAttributes.RANGED_DAMAGE.get(),
             ModAttributes.MAX_STAMINA.get(),
             ModAttributes.MAX_ENERGY.get(),
             ModAttributes.MAX_MANA.get(),
             ModAttributes.STAMINA_RECHARGE.get(),
             ModAttributes.ENERGY_RECHARGE.get(),
             ModAttributes.MANA_RECHARGE.get(),
-            ModAttributes.CRITICAL_DAMAGE.get(),
-            ModAttributes.CRITICAL_CHANCE.get(),
-            ModAttributes.DAMAGE_RESISTANCE.get(),
-            ModAttributes.LIFE_STEAL.get(),
-            ModAttributes.HEALING_EFFECTIVENESS.get()
+            CoreAttributes.CRITICAL_DAMAGE.get(),
+            CoreAttributes.CRITICAL_CHANCE.get(),
+            CoreAttributes.DAMAGE_RESISTANCE.get(),
+            CoreAttributes.LIFE_STEAL.get(),
+            CoreAttributes.HEALING_EFFECTIVENESS.get()
     );
 
     public static void resetAttributes(Player player) {

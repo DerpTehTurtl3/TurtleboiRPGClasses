@@ -13,18 +13,18 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.turtleboi.turtlerpgclasses.commands.InviteCommand;
+import net.turtleboi.turtlecore.util.BetterBrewingRecipe;
 import net.turtleboi.turtlerpgclasses.commands.OpenEditUICommand;
+import net.turtleboi.turtlerpgclasses.commands.ResetTalentsCommand;
 import net.turtleboi.turtlerpgclasses.commands.SetTalentPointsCommand;
 import net.turtleboi.turtlerpgclasses.config.UIConfig;
 import net.turtleboi.turtlerpgclasses.effect.ModEffects;
 import net.turtleboi.turtlerpgclasses.entity.ModEntities;
+import net.turtleboi.turtlerpgclasses.event.CooldownResetListener;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 import net.turtleboi.turtlerpgclasses.item.ModItems;
 import net.turtleboi.turtlerpgclasses.network.ModNetworking;
-import net.turtleboi.turtlerpgclasses.particle.ModParticles;
 import net.turtleboi.turtlerpgclasses.potion.ModPotions;
-import net.turtleboi.turtlerpgclasses.util.BetterBrewingRecipe;
 import org.slf4j.Logger;
 
 @Mod(TurtleRPGClasses.MOD_ID)
@@ -41,11 +41,10 @@ public class TurtleRPGClasses {
         ModEffects.register(modEventBus);
         ModPotions.register(modEventBus);
 
-        ModParticles.register(modEventBus);
-
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new CooldownResetListener());
 
         //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, UIConfig.spec, "turtlerpgclasses/turtlerpgclasses-client.toml");
@@ -81,7 +80,7 @@ public class TurtleRPGClasses {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         SetTalentPointsCommand.register(event.getServer().getCommands().getDispatcher());
-        InviteCommand.register(event.getServer().getCommands().getDispatcher());
+        ResetTalentsCommand.register(event.getServer().getCommands().getDispatcher());
         OpenEditUICommand.register(event.getServer().getCommands().getDispatcher());
     }
 }

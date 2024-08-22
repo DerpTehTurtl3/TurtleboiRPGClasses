@@ -10,8 +10,8 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.turtleboi.turtlecore.util.TargetingUtils;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.PlayerAbilityProvider;
-import net.turtleboi.turtlerpgclasses.util.TargetingUtils;
 
 import java.util.*;
 

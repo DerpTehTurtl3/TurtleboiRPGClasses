@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,8 +31,10 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.turtleboi.turtlecore.effect.CoreEffects;
+import net.turtleboi.turtlecore.util.PartyUtils;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
-import net.turtleboi.turtlerpgclasses.capabilities.party.PlayerPartyProvider;
+import net.turtleboi.turtlecore.capabilities.party.PlayerPartyProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.PlayerAbilityProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.PlayerClassProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
@@ -46,10 +50,11 @@ import net.turtleboi.turtlerpgclasses.network.packet.ClassSelectionS2CPacket;
 import net.turtleboi.turtlerpgclasses.network.packet.OpenClassSelectionScreenPacket;
 import net.turtleboi.turtlerpgclasses.network.packet.resources.PlayerResourcesS2CPacket;
 import net.turtleboi.turtlerpgclasses.rpg.attributes.ClassAttributeManager;
+import net.turtleboi.turtlerpgclasses.rpg.classes.Mage;
+import net.turtleboi.turtlerpgclasses.rpg.classes.Ranger;
+import net.turtleboi.turtlerpgclasses.rpg.classes.Warrior;
 import net.turtleboi.turtlerpgclasses.rpg.talents.*;
 import net.turtleboi.turtlerpgclasses.rpg.talents.active.*;
-import net.turtleboi.turtlerpgclasses.util.PartyUtils;
-import net.turtleboi.turtlerpgclasses.event.ClientEvents;
 
 import java.util.List;
 import java.util.Random;
@@ -72,9 +77,6 @@ public class ModEvents {
             if (!event.getObject().getCapability(PlayerAbilityProvider.PLAYER_ABILITY).isPresent()) {
                 event.addCapability(new ResourceLocation(TurtleRPGClasses.MOD_ID, "player_ability"), new PlayerAbilityProvider());
             }
-            if (!event.getObject().getCapability(PlayerPartyProvider.PLAYER_PARTY).isPresent()) {
-                event.addCapability(new ResourceLocation(TurtleRPGClasses.MOD_ID, "player_party"), new PlayerPartyProvider());
-            }
         }
     }
 
@@ -94,9 +96,6 @@ public class ModEvents {
             event.getOriginal().getCapability(PlayerResourceProvider.PLAYER_RESOURCE).ifPresent(oldStore ->
                     event.getEntity().getCapability(PlayerResourceProvider.PLAYER_RESOURCE).ifPresent(newStore ->
                             newStore.copyFrom(oldStore)));
-            event.getOriginal().getCapability(PlayerPartyProvider.PLAYER_PARTY).ifPresent(oldStore ->
-                    event.getEntity().getCapability(PlayerPartyProvider.PLAYER_PARTY).ifPresent(newStore ->
-                            newStore.copyFrom(oldStore)));
             event.getOriginal().invalidateCaps();
         }
     }
@@ -104,7 +103,6 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         Player player = event.getEntity();
-        player.reviveCaps();
         player.getCapability(TalentStatesProvider.TALENT_STATES).ifPresent(talentStates -> {
             CompoundTag compound = new CompoundTag();
             talentStates.saveNBTData(compound);
@@ -112,7 +110,6 @@ public class ModEvents {
                 newTalentStates.loadNBTData(compound);
             });
         });
-        player.invalidateCaps();
         if (player.level.isClientSide()) {
             CooldownOverlay.initializeSlots(player);
             ResourceOverlay.initializeResourceBars();
@@ -150,6 +147,39 @@ public class ModEvents {
                                 playerResource.getMaxMana()), player));
                 CooldownOverlay.initializeSlots(player);
                 ResourceOverlay.initializeResourceBars();
+
+                player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerClass -> {
+                    String className = playerClass.getRpgClass();
+                    switch (className) {
+                        case "Warrior":
+                            if (!new Warrior().isActive(player)) {
+                                TalentStates.resetAllTalents(player);
+                                new Warrior().setActive(player);
+                                break;
+                            }
+                            break;
+                        case "Ranger":
+                            if (!new Ranger().isActive(player)) {
+                                TalentStates.resetAllTalents(player);
+                                new Ranger().setActive(player);
+                                break;
+                            }
+                            break;
+                        case "Mage":
+                            if (!new Mage().isActive(player)) {
+                                TalentStates.resetAllTalents(player);
+                                new Mage().setActive(player);
+                                break;
+                            }
+                            break;
+                    }
+                });
+                player.sendSystemMessage(Component.literal("Thank you downloading ")
+                        .append(Component.literal("TurtleBoi's RPG Classes")
+                                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFD52B"))))
+                        .append(Component.literal("! The mod recently updated it's core and you may experience some bugs if you" +
+                                " had previously downloaded version 0.1.0. If Talent Trees are unavailable, use the command /tbrpg resetTalents" +
+                                " command, or simply leave and rejoin the world. If issues persists, don't hesitate to leave a bug report on our CurseForge page.")));
             }
         }
     }
@@ -236,12 +266,12 @@ public class ModEvents {
                 AABB wrathAABB = new AABB(player.blockPosition()).inflate(warlordsPresenceTalent.getWrathRadius());
 
                 level.getEntitiesOfClass(Player.class, warlordAABB).forEach(ally -> {
-                    if (PartyUtils.isAlly(player, ally) && ally != player) {
+                    if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) && ally != player) {
                         float damage = event.getAmount();
                         player.hurt(DamageSource.GENERIC, damage * 0.5f);
                         event.setAmount(damage * 0.5f);
                     }
-                    if (PartyUtils.isAlly(player, ally) || ally == player){
+                    if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player){
                         if (player.getHealth() <= player.getMaxHealth() * 0.3) {
                             player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility ->{
                                 if (!ally.hasEffect(ModEffects.DEFEATED.get()) && !playerAbility.isRallyTriggered()) {
@@ -253,7 +283,7 @@ public class ModEvents {
                     }
                 });
                 level.getEntitiesOfClass(Player.class, wrathAABB).forEach(ally -> {
-                    if (PartyUtils.isAlly(player, ally) || ally == player){
+                    if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player){
                         if (player.hasEffect(ModEffects.WRATH.get())) {
                             float damage = event.getAmount();
                             event.setAmount(damage * 0.5f);
@@ -332,31 +362,31 @@ public class ModEvents {
             victoriousCryTalent.handleDamageBoost(player, target, event.getAmount());
         }
 
-        player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
-            if (playerAbility.isExecuteActive()) {
-                float damage = event.getAmount();
-                float missingHealthPercent = 1 - (target.getHealth() / target.getMaxHealth());
-                float bonusDamage = 8 * missingHealthPercent;
-                float totalDamage = damage + bonusDamage;
-                event.setAmount(totalDamage);
-
-                // Spawn red sword sweep particles
-                ExecuteTalent.spawnExecuteParticle(target);
-
-                if (target.hasEffect(ModEffects.BLEEDING.get())) {
-                    target.addEffect(new MobEffectInstance(ModEffects.STUNNED.get(), 100, 1)); // Stun for 5 seconds
-                }
-
-                playerAbility.setExecuteActive(false);
-
-                if (totalDamage >= target.getHealth()) {
-                    // Refresh cooldown of Execute
-                    ExecuteTalent executeTalent = new ExecuteTalent();
-                    executeTalent.resetAbilityCooldown(player);
-                    //player.sendSystemMessage(Component.literal("Execute refreshed!"));//Debug code
-                }
-            }
-        });
+        //player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
+        //    if (playerAbility.isExecuteActive()) {
+        //        float damage = event.getAmount();
+        //        float missingHealthPercent = 1 - (target.getHealth() / target.getMaxHealth());
+        //        float bonusDamage = 8 * missingHealthPercent;
+        //        float totalDamage = damage + bonusDamage;
+        //        event.setAmount(totalDamage);
+//
+        //        // Spawn red sword sweep particles
+        //        ExecuteTalent.spawnExecuteParticle(target);
+//
+        //        if (target.hasEffect(ModEffects.BLEEDING.get())) {
+        //            target.addEffect(new MobEffectInstance(ModEffects.STUNNED.get(), 100, 1)); // Stun for 5 seconds
+        //        }
+//
+        //        playerAbility.setExecuteActive(false);
+//
+        //        if (totalDamage >= target.getHealth()) {
+        //            // Refresh cooldown of Execute
+        //            ExecuteTalent executeTalent = new ExecuteTalent();
+        //            executeTalent.resetAbilityCooldown(player);
+        //            //player.sendSystemMessage(Component.literal("Execute refreshed!"));//Debug code
+        //        }
+        //    }
+        //});
 
         WarlordsPresenceTalent warlordsPresenceTalent = new WarlordsPresenceTalent();
         if (warlordsPresenceTalent.isActive(player)) {
@@ -365,12 +395,12 @@ public class ModEvents {
 
             if (player.hasEffect(ModEffects.WRATH.get())) {
                 level.getEntitiesOfClass(Player.class, wrathAABB).forEach(ally -> {
-                    if (PartyUtils.isAlly(player, ally) || ally == player) {
+                    if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player) {
                         if (target != player && target != ally) {
-                            target.addEffect(new MobEffectInstance(ModEffects.BLEEDING.get(), 20 * 10, 0));
+                            target.addEffect(new MobEffectInstance(CoreEffects.BLEEDING.get(), 20 * 10, 0));
                             Random random = new Random();
                             if (random.nextInt(100) < 20) {
-                                target.addEffect(new MobEffectInstance(ModEffects.STUNNED.get()));
+                                target.addEffect(new MobEffectInstance(CoreEffects.STUNNED.get()));
                             }
                         }
                     }

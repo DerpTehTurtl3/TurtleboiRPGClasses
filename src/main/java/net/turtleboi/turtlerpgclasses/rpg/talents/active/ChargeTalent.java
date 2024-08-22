@@ -7,10 +7,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.turtleboi.turtlecore.effect.CoreEffects;
+import net.turtleboi.turtlecore.init.CoreAttributes;
+import net.turtleboi.turtlecore.util.TargetingUtils;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.PlayerAbilityProvider;
 import net.turtleboi.turtlerpgclasses.effect.ModEffects;
 import net.turtleboi.turtlerpgclasses.rpg.talents.MomentumTalent;
-import net.turtleboi.turtlerpgclasses.util.TargetingUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +64,7 @@ public class ChargeTalent extends ActiveAbility{
         if (target != null) {
             player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbilities -> {
                 playerAbilities.setTargetEntity(target);
-                target.addEffect(new MobEffectInstance(ModEffects.ROOTED.get(), 60, 0));
+                target.addEffect(new MobEffectInstance(CoreEffects.ROOTED.get(), 60, 0));
                 playerAbilities.setCharging(true);
                 MomentumTalent momentumTalent = new MomentumTalent();
                 if (momentumTalent.isActive(player)) {

@@ -1,5 +1,6 @@
 package net.turtleboi.turtlerpgclasses.rpg.talents;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,10 +10,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.fml.common.Mod;
-import net.turtleboi.turtlerpgclasses.capabilities.talents.PlayerAbilityProvider;
+import net.turtleboi.turtlecore.util.PartyUtils;
 import net.turtleboi.turtlerpgclasses.effect.ModEffects;
-import net.turtleboi.turtlerpgclasses.util.PartyUtils;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -89,7 +88,7 @@ public class SecondWindTalent extends Talent {
         for (Entity entity : entities) {
             if (entity instanceof LivingEntity) {
                 MobCategory category = entity.getType().getCategory();
-                if (entity instanceof Player ally && PartyUtils.isAlly(player, ally)) {
+                if (entity instanceof Player ally && PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally)) {
                     continue;
                 }
 

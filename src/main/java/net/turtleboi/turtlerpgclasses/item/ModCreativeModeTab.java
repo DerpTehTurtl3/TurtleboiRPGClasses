@@ -10,7 +10,7 @@ public class ModCreativeModeTab {
     public static final CreativeModeTab TURTLERPGCLASSES_TAB = new CreativeModeTab("turtlerpgclassestab") {
         @Override
         public @NotNull ItemStack makeIcon() {
-            return new ItemStack(ModItems.JUGGERNAUT_HELMET.get());
+            return new ItemStack(Items.NETHERITE_INGOT);
         }
     };
 }
