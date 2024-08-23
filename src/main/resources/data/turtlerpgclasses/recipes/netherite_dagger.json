@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "turtlerpgclasses:diamond_dagger"
+  },
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "result": {
+    "item": "turtlerpgclasses:netherite_dagger",
+    "count": 1
+  }
+}

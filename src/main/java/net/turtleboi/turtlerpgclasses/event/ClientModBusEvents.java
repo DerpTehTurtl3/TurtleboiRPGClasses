@@ -9,10 +9,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.turtleboi.turtlecore.entity.CoreEntities;
-import net.turtleboi.turtlecore.entity.client.SanctuaryDomeModel;
-import net.turtleboi.turtlecore.entity.client.UnleashFuryModel;
-import net.turtleboi.turtlecore.entity.client.renderer.UnleashFuryRenderer;
 import net.turtleboi.turtlecore.network.CoreNetworking;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.client.ui.cooldowns.CooldownOverlay;
@@ -20,9 +16,6 @@ import net.turtleboi.turtlerpgclasses.client.ui.resources.ResourceOverlay;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentPointAllocator;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentScreen;
 import net.turtleboi.turtlerpgclasses.entity.ModEntities;
-import net.turtleboi.turtlerpgclasses.entity.client.ThrowableDaggerModel;
-import net.turtleboi.turtlerpgclasses.entity.client.renderer.ThrowableDaggerRenderer;
-import net.turtleboi.turtlerpgclasses.entity.weapons.ThrowableDagger;
 import net.turtleboi.turtlerpgclasses.network.packet.experience.TalentExperienceHandler;
 import net.turtleboi.turtlerpgclasses.util.KeyBinding;
 
@@ -33,8 +26,6 @@ public class ClientModBusEvents {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        EntityRenderers.register(ModEntities.THROWABLE_DAGGER.get(), ThrowableDaggerRenderer::new);
-
         Minecraft minecraft = Minecraft.getInstance();
 
         minecraft.execute(() -> {
@@ -80,7 +71,6 @@ public class ClientModBusEvents {
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event){
-        event.registerLayerDefinition(ThrowableDaggerModel.DAGGER_LAYER, ThrowableDaggerModel::createBodyLayer);
     }
 }
 

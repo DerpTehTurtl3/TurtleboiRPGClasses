@@ -1,7 +1,7 @@
 {
   "textures": {
-    "2": "turtlerpgclasses:item/stone_dagger",
-    "particle": "turtlerpgclasses:item/stone_dagger"
+    "2": "turtlerpgclasses:item/flint_dagger",
+    "particle": "turtlerpgclasses:item/flint_dagger"
   },
   "elements": [
     {

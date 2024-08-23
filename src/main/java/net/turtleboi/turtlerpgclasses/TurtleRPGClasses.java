@@ -33,15 +33,15 @@ public class TurtleRPGClasses {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public TurtleRPGClasses() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModItems.register(modEventBus);
+        ModItems.register(eventBus);
 
-        ModEntities.register(modEventBus);
-        ModEffects.register(modEventBus);
-        ModPotions.register(modEventBus);
+        ModEntities.register(eventBus);
+        ModEffects.register(eventBus);
+        ModPotions.register(eventBus);
 
-        modEventBus.addListener(this::commonSetup);
+        eventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new CooldownResetListener());
@@ -49,7 +49,7 @@ public class TurtleRPGClasses {
         //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, UIConfig.spec, "turtlerpgclasses/turtlerpgclasses-client.toml");
 
-        ModAttributes.REGISTRY.register(modEventBus);
+        ModAttributes.REGISTRY.register(eventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

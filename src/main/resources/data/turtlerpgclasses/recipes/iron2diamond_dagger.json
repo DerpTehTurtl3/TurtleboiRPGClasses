@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "turtlerpgclasses:iron_dagger"
+  },
+  "addition": {
+    "item": "minecraft:diamond"
+  },
+  "result": {
+    "item": "turtlerpgclasses:diamond_dagger",
+    "count": 1
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "parent": "item/handheld",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "turtlerpgclasses:item/3d/diamond_handaxe"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "turtlerpgclasses:item/2d/diamond_handaxe"
+    },
+    "ground": {
+      "parent": "turtlerpgclasses:item/2d/diamond_handaxe"
+    },
+    "fixed": {
+      "parent": "turtlerpgclasses:item/2d/diamond_handaxe"
+    },
+    "thirdperson_righthand": {
+      "parent": "turtlerpgclasses:item/3d/diamond_handaxe"
+    },
+    "thirdperson_lefthand": {
+      "parent": "turtlerpgclasses:item/3d/diamond_handaxe"
+    },
+    "firstperson_righthand": {
+      "parent": "turtlerpgclasses:item/3d/diamond_handaxe"
+    },
+    "firstperson_lefthand": {
+      "parent": "turtlerpgclasses:item/3d/diamond_handaxe"
+    }
+  }
+}

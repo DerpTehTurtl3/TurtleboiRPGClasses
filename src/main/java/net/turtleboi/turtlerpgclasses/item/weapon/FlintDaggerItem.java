@@ -5,11 +5,11 @@ import net.minecraft.world.item.Tier;
 import net.turtleboi.turtlecore.item.weapon.AbstractDaggerItem;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 
-public class NetheriteDaggerItem extends AbstractDaggerItem {
+public class FlintDaggerItem extends AbstractDaggerItem {
 
-    private static final ResourceLocation DAGGER_TEXTURE = new ResourceLocation(TurtleRPGClasses.MOD_ID, "textures/item/netherite_dagger.png");
+    private static final ResourceLocation DAGGER_TEXTURE = new ResourceLocation(TurtleRPGClasses.MOD_ID, "textures/item/flint_dagger.png");
 
-    public NetheriteDaggerItem(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
+    public FlintDaggerItem(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
         super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
     }
 
