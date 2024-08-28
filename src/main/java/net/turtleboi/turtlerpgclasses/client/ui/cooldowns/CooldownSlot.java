@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.ActiveAbility;
+import net.turtleboi.turtlerpgclasses.rpg.talents.ActiveAbility;
 
 import java.util.HashMap;
 import java.util.Map;

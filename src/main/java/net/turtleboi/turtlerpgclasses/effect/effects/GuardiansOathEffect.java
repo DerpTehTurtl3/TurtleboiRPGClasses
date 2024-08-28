@@ -9,7 +9,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.player.Player;
 import net.turtleboi.turtlerpgclasses.effect.ModEffects;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.GuardiansOathTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.GuardiansOathTalent;
 import org.jetbrains.annotations.NotNull;
 
 public class GuardiansOathEffect extends MobEffect {

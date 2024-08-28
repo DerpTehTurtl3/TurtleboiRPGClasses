@@ -1,6 +1,5 @@
 package net.turtleboi.turtlerpgclasses.client.ui.resources;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -14,6 +13,9 @@ import net.turtleboi.turtlerpgclasses.config.UIConfig;
 public class ResourceOverlay {
     private static ResourceBar mainResourceBar;
     private static ResourceBar secondaryResourceBar;
+    private static final int stamina = 0;
+    private static final int energy = 2 * ResourceBar.barHeight;
+    private static final int mana = 4 * ResourceBar.barHeight;
 
     public static final IGuiOverlay HUD_RESOURCESNUMBER = (gui, poseStack, partialTick, width, height) -> {
         Minecraft minecraft = Minecraft.getInstance();
@@ -21,9 +23,9 @@ public class ResourceOverlay {
         Font font = minecraft.font;
 
         if (player == null) return;
-        if (mainResourceBar == null || secondaryResourceBar == null) {
-            initializeResourceBars();
-        }
+        //if (mainResourceBar == null || secondaryResourceBar == null) {
+            initializeResourceBars(player);
+        //}
 
         if (mainResourceBar != null) {
             mainResourceBar.render(poseStack, font);
@@ -33,13 +35,18 @@ public class ResourceOverlay {
         }
     };
 
-    public static void initializeResourceBars() {
+    public static void initializeResourceBars(Player player) {
         Minecraft minecraft = Minecraft.getInstance();
         int screenWidth = minecraft.getWindow().getGuiScaledWidth();
         int screenHeight = minecraft.getWindow().getGuiScaledHeight();
 
-        String playerClass = ClientClassData.getPlayerClass();
-        String playerSubclass = ClientClassData.getPlayerSubclass();
+        String className = ClientClassData.getPlayerClass();
+        String subclassName = ClientClassData.getPlayerSubclass();
+
+        String warrior = Component.translatable("class.warrior.name").getString();
+        String ranger = Component.translatable("class.ranger.name").getString();
+        String mage = Component.translatable("class.mage.name").getString();
+        String paladin = Component.translatable("subclass.paladin.name").getString();
 
         int[] mainCoords = calculateStartCoordinates(
                 screenWidth,
@@ -55,92 +62,115 @@ public class ResourceOverlay {
                 UIConfig.resourceSecondaryY.get(),
                 MovableUIComponent.Anchor.fromString(
                         UIConfig.resourceSecondaryAnchor.get()));
-
         mainResourceBar = null;
         secondaryResourceBar = null;
 
-        if ("Warrior".equals(playerClass)) {
-            if ("Paladin".equals(playerSubclass)) {
+        int resourceBarWidth = ResourceBar.barWidth - 2 * ResourceBar.barXOffset;
+        if (warrior.equals(className)) {
+            if (paladin.equals(subclassName)) {
                 mainResourceBar = new ResourceBar.Builder()
                         .setPosition(mainCoords[0], mainCoords[1])
-                        .setFilledWidth((int) ((ClientResourceData.getStamina() / (float) ClientResourceData.getMaxStamina()) * (ResourceBar.barWidth - 2 * ResourceBar.barXOffset)))
-                        .setText(Component.literal(ClientResourceData.getStamina() + "/" + ClientResourceData.getMaxStamina()))
+                        .setFilledWidth(((getStamina() / getMaxStamina()) * resourceBarWidth))
+                        .setText(Component.literal(getStamina() + "/" + (int) getMaxStamina()))
                         .setTextColor(0xE50000)
-                        .setBarTypeYOffset(0 * ResourceBar.barHeight)
+                        .setBarTypeYOffset(stamina)
                         .setIsMain(true)
                         .build();
-
                 secondaryResourceBar = new ResourceBar.Builder()
                         .setPosition(secondaryCoords[0], secondaryCoords[1])
-                        .setFilledWidth((int) ((ClientResourceData.getMana() / (float) ClientResourceData.getMaxMana()) * (ResourceBar.barWidth - 2 * ResourceBar.barXOffset)))
-                        .setText(Component.literal(ClientResourceData.getMana() + "/" + ClientResourceData.getMaxMana()))
+                        .setFilledWidth(((getMana() / getMaxMana()) * resourceBarWidth))
+                        .setText(Component.literal(getMana() + "/" + (int) getMaxMana()))
                         .setTextColor(0x55FFFF)
-                        .setBarTypeYOffset(4 * ResourceBar.barHeight)
+                        .setBarTypeYOffset(mana)
                         .setIsMain(false)
                         .build();
             } else {
                 mainResourceBar = new ResourceBar.Builder()
                         .setPosition(mainCoords[0], mainCoords[1])
-                        .setFilledWidth((int) ((ClientResourceData.getStamina() / (float) ClientResourceData.getMaxStamina()) * (ResourceBar.barWidth - 2 * ResourceBar.barXOffset)))
-                        .setText(Component.literal(ClientResourceData.getStamina() + "/" + ClientResourceData.getMaxStamina()))
+                        .setFilledWidth(((getStamina() / getMaxStamina()) * resourceBarWidth))
+                        .setText(Component.literal(getStamina() + "/" + (int) getMaxStamina()))
                         .setTextColor(0xE50000)
-                        .setBarTypeYOffset(0 * ResourceBar.barHeight)
+                        .setBarTypeYOffset(stamina)
                         .setIsMain(true)
                         .build();
             }
-        } else if ("Ranger".equals(playerClass)) {
+        } else if (ranger.equals(className)) {
             mainResourceBar = new ResourceBar.Builder()
                     .setPosition(mainCoords[0], mainCoords[1])
-                    .setFilledWidth((int) ((ClientResourceData.getEnergy() / (float) ClientResourceData.getMaxEnergy()) * (ResourceBar.barWidth - 2 * ResourceBar.barXOffset)))
-                    .setText(Component.literal(ClientResourceData.getEnergy() + "/" + ClientResourceData.getMaxEnergy()))
+                    .setFilledWidth(((getEnergy() / getMaxEnergy()) * resourceBarWidth))
+                    .setText(Component.literal(getEnergy() + "/" + (int) getMaxEnergy()))
                     .setTextColor(0x6AFE6A)
-                    .setBarTypeYOffset(2 * ResourceBar.barHeight)
+                    .setBarTypeYOffset(energy)
                     .setIsMain(true)
                     .build();
-        } else if ("Mage".equals(playerClass)) {
+        } else if (mage.equals(className)) {
             mainResourceBar = new ResourceBar.Builder()
                     .setPosition(mainCoords[0], mainCoords[1])
-                    .setFilledWidth((int) ((ClientResourceData.getMana() / (float) ClientResourceData.getMaxMana()) * (ResourceBar.barWidth - 2 * ResourceBar.barXOffset)))
-                    .setText(Component.literal(ClientResourceData.getMana() + "/" + ClientResourceData.getMaxMana()))
+                    .setFilledWidth(((getMana() / getMaxMana()) * resourceBarWidth))
+                    .setText(Component.literal(getMana() + "/" + (int) getMaxMana()))
                     .setTextColor(0x55FFFF)
-                    .setBarTypeYOffset(4 * ResourceBar.barHeight)
+                    .setBarTypeYOffset(mana)
                     .setIsMain(true)
                     .build();
         }
     }
 
+    private static int getStamina(){
+        return ClientResourceData.getStamina();
+    }
+
+    private static int getEnergy(){
+        return ClientResourceData.getEnergy();
+    }
+
+    private static int getMana(){
+        return ClientResourceData.getMana();
+    }
+
+    private static float getMaxStamina(){
+        return ClientResourceData.getMaxStamina();
+    }
+
+    private static float getMaxEnergy(){
+        return ClientResourceData.getMaxEnergy();
+    }
+
+    private static float getMaxMana(){
+        return ClientResourceData.getMaxMana();
+    }
+
     private static int[] calculateStartCoordinates(int screenWidth, int screenHeight, int offsetX, int offsetY, MovableUIComponent.Anchor anchor) {
         int x = 0, y = 0;
-        switch (anchor) {
-            case TOP_LEFT:
+        y = switch (anchor) {
+            case TOP_LEFT -> {
                 x = offsetX;
-                y = offsetY;
-                break;
-            case TOP_RIGHT:
+                yield offsetY;
+            }
+            case TOP_RIGHT -> {
                 x = screenWidth - offsetX - ResourceBar.barWidth;
-                y = offsetY;
-                break;
-            case BOTTOM_LEFT:
+                yield offsetY;
+            }
+            case BOTTOM_LEFT -> {
                 x = offsetX;
-                y = screenHeight - offsetY - ResourceBar.barHeight;
-                break;
-            case BOTTOM_RIGHT:
+                yield screenHeight - offsetY - ResourceBar.barHeight;
+            }
+            case BOTTOM_RIGHT -> {
                 x = screenWidth - offsetX - ResourceBar.barWidth;
-                y = screenHeight - offsetY - ResourceBar.barHeight;
-                break;
-            case TOP_CENTER:
+                yield screenHeight - offsetY - ResourceBar.barHeight;
+            }
+            case TOP_CENTER -> {
                 x = (screenWidth / 2) + offsetX - (ResourceBar.barWidth / 2);
-                y = offsetY;
-                break;
-            case BOTTOM_CENTER:
+                yield offsetY;
+            }
+            case BOTTOM_CENTER -> {
                 x = (screenWidth / 2) + offsetX - (ResourceBar.barWidth / 2);
-                y = screenHeight - offsetY - ResourceBar.barHeight;
-                break;
-            case CENTER:
+                yield screenHeight - offsetY - ResourceBar.barHeight;
+            }
+            case CENTER -> {
                 x = (screenWidth / 2) + offsetX - (ResourceBar.barWidth / 2);
-                y = (screenHeight / 2) + offsetY - (ResourceBar.barHeight / 2);
-                break;
-        }
+                yield (screenHeight / 2) + offsetY - (ResourceBar.barHeight / 2);
+            }
+        };
         return new int[]{x, y};
     }
 }

@@ -25,7 +25,7 @@ public class OpenEditUICommand {
         if (player != null) {
             //ModNetworking.sendToPlayer(new OpenEditUIScreenPacket(), player);
             CooldownOverlay.initializeSlots(player);
-            ResourceOverlay.initializeResourceBars();
+            ResourceOverlay.initializeResourceBars(player);
         }
         return 1;
     }

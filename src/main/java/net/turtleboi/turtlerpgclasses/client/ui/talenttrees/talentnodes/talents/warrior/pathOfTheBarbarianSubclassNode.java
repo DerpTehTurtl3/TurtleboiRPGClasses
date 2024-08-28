@@ -6,14 +6,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.turtleboi.turtlecore.init.CoreAttributes;
+import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.BarbarianTalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentScreen;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.ActiveTalentButton;
 import net.turtleboi.turtlerpgclasses.rpg.talents.Talent;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.UnleashFuryTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.UnleashFuryTalent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,11 @@ public class pathOfTheBarbarianSubclassNode extends ActiveTalentButton {
 
     public pathOfTheBarbarianSubclassNode(TalentTree talentTree, Talent talent, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
         super(talentTree, talent, x, y, maxPoints, requiredPoints, alwaysActive, onPress);
+    }
+
+    @Override
+    public ResourceLocation getIconTexture() {
+        return new ResourceLocation(TurtleRPGClasses.MOD_ID, "textures/gui/talents/talent_icons/pathofthebarbariansubclass_icon.png");
     }
 
     @Override
@@ -62,13 +69,13 @@ public class pathOfTheBarbarianSubclassNode extends ActiveTalentButton {
                         Style.EMPTY);
 
 
-        tooltip.add(Component.translatable("talents.subclass.barbarian")//Change this value for each talent
+        tooltip.add(Component.translatable("subclass.barbarian.talent")//Change this value for each talent
                 .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFD52B")))
                 .append(Component.literal(" "))
                 .append(Component.translatable("talents.talent_type.subclass")
                         .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#808080")))
                 ));
-        tooltip.add(Component.translatable("talents.subclass.barbarian.description"));
+        tooltip.add(Component.translatable("subclass.barbarian.description"));
         tooltip.add(Component.literal(" "));
         tooltip.add(Component.translatable("talents.subclass.barbarian.unleash_fury")
                 .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFD52B")))

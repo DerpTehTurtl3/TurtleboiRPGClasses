@@ -15,6 +15,12 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
@@ -25,7 +31,10 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,8 +42,8 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.turtleboi.turtlecore.effect.CoreEffects;
 import net.turtleboi.turtlecore.util.PartyUtils;
+import net.turtleboi.turtlecore.util.TargetingUtils;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
-import net.turtleboi.turtlecore.capabilities.party.PlayerPartyProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.PlayerAbilityProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.PlayerClassProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
@@ -53,8 +62,13 @@ import net.turtleboi.turtlerpgclasses.rpg.attributes.ClassAttributeManager;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Mage;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Ranger;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Warrior;
-import net.turtleboi.turtlerpgclasses.rpg.talents.*;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.ActiveAbility;
+import net.turtleboi.turtlerpgclasses.rpg.talents.commonTalents.FocusedStrikesTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.QuickDrawTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.BrawlersTenacityTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfThePaladinSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.SecondWindTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.*;
 
 import java.util.List;
 import java.util.Random;
@@ -112,7 +126,7 @@ public class ModEvents {
         });
         if (player.level.isClientSide()) {
             CooldownOverlay.initializeSlots(player);
-            ResourceOverlay.initializeResourceBars();
+            ResourceOverlay.initializeResourceBars(player);
         }
     }
 
@@ -139,14 +153,14 @@ public class ModEvents {
                 player.getCapability(PlayerResourceProvider.PLAYER_RESOURCE).ifPresent(playerResource ->
                         ModNetworking.sendToPlayer(
                         new PlayerResourcesS2CPacket(
-                                playerResource.getStamina(),
                                 playerResource.getMaxStamina(),
-                                playerResource.getEnergy(),
                                 playerResource.getMaxEnergy(),
-                                playerResource.getMana(),
-                                playerResource.getMaxMana()), player));
+                                playerResource.getMaxMana(),
+                                playerResource.getStamina(),
+                                playerResource.getEnergy(),
+                                playerResource.getMana()), player));
                 CooldownOverlay.initializeSlots(player);
-                ResourceOverlay.initializeResourceBars();
+                ResourceOverlay.initializeResourceBars(player);
 
                 player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerClass -> {
                     String className = playerClass.getRpgClass();
@@ -174,12 +188,12 @@ public class ModEvents {
                             break;
                     }
                 });
-                player.sendSystemMessage(Component.literal("Thank you downloading ")
-                        .append(Component.literal("TurtleBoi's RPG Classes")
-                                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFD52B"))))
-                        .append(Component.literal("! The mod recently updated it's core and you may experience some bugs if you" +
-                                " had previously downloaded version 0.1.0. If Talent Trees are unavailable, use the command /tbrpg resetTalents" +
-                                " command, or simply leave and rejoin the world. If issues persists, don't hesitate to leave a bug report on our CurseForge page.")));
+                //player.sendSystemMessage(Component.literal("Thank you downloading ")
+                //        .append(Component.literal("TurtleBoi's RPG Classes")
+                //                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFD52B"))))
+                //        .append(Component.literal("! The mod recently updated it's core and you may experience some bugs if you" +
+                //                " had previously downloaded version 0.1.0. If Talent Trees are unavailable, use the command /tbrpg resetTalents" +
+                //                " command, or simply leave and rejoin the world. If issues persists, don't hesitate to leave a bug report on our CurseForge page.")));
             }
         }
     }
@@ -197,7 +211,7 @@ public class ModEvents {
                     }
                 });
                 CooldownOverlay.initializeSlots(player);
-                ResourceOverlay.initializeResourceBars();
+                ResourceOverlay.initializeResourceBars(player);
             }
         }
     }
@@ -359,34 +373,8 @@ public class ModEvents {
 
         VictoriousCryTalent victoriousCryTalent = new VictoriousCryTalent();
         if (victoriousCryTalent.isActive(player)){
-            victoriousCryTalent.handleDamageBoost(player, target, event.getAmount());
+            VictoriousCryTalent.handleDamageBoost(victoriousCryTalent, player, target, event);
         }
-
-        //player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
-        //    if (playerAbility.isExecuteActive()) {
-        //        float damage = event.getAmount();
-        //        float missingHealthPercent = 1 - (target.getHealth() / target.getMaxHealth());
-        //        float bonusDamage = 8 * missingHealthPercent;
-        //        float totalDamage = damage + bonusDamage;
-        //        event.setAmount(totalDamage);
-//
-        //        // Spawn red sword sweep particles
-        //        ExecuteTalent.spawnExecuteParticle(target);
-//
-        //        if (target.hasEffect(ModEffects.BLEEDING.get())) {
-        //            target.addEffect(new MobEffectInstance(ModEffects.STUNNED.get(), 100, 1)); // Stun for 5 seconds
-        //        }
-//
-        //        playerAbility.setExecuteActive(false);
-//
-        //        if (totalDamage >= target.getHealth()) {
-        //            // Refresh cooldown of Execute
-        //            ExecuteTalent executeTalent = new ExecuteTalent();
-        //            executeTalent.resetAbilityCooldown(player);
-        //            //player.sendSystemMessage(Component.literal("Execute refreshed!"));//Debug code
-        //        }
-        //    }
-        //});
 
         WarlordsPresenceTalent warlordsPresenceTalent = new WarlordsPresenceTalent();
         if (warlordsPresenceTalent.isActive(player)) {
@@ -410,6 +398,44 @@ public class ModEvents {
     }
 
     @SubscribeEvent
+    public static void onItemUseTick(LivingEntityUseItemEvent.Start event) {
+        Entity source = event.getEntity();
+        //source.sendSystemMessage(Component.literal("Use Item Event triggered for " + source.getName().getString())); //debug code
+        if (source instanceof Player player) {
+            QuickDrawTalent quickDrawTalent = new QuickDrawTalent();
+            //player.sendSystemMessage(Component.literal("Quick Draw is active? " + (quickDrawTalent.isActive(player)))); //debug code
+            if (quickDrawTalent.isActive(player)) {
+                ItemStack itemStack = event.getItem();
+                int currentPoints = quickDrawTalent.getPoints(player);
+                double drawSpeedMultiplier = (quickDrawTalent.getDrawSpeed(currentPoints)) / 100;
+                //player.sendSystemMessage(Component.literal("Draw speed bonus: " + (quickDrawTalent.getDrawSpeed(currentPoints)))); //debug code
+
+                if (itemStack.getItem() instanceof BowItem) {
+                    int useDuration = event.getDuration();
+                    int chargeDuration = BowItem.MAX_DRAW_DURATION;
+                    //player.sendSystemMessage(Component.literal("Original draw duration: " + useDuration));//debug code
+                    int adjustedDuration = (int) (useDuration - (chargeDuration * drawSpeedMultiplier));
+                    adjustedDuration = Math.max(1, adjustedDuration); // Ensure duration isn't too low
+                    //player.sendSystemMessage(Component.literal("Adjusted draw duration: " + adjustedDuration)); //debug code
+                    event.setDuration(adjustedDuration);
+                }
+
+                if (itemStack.getItem() instanceof CrossbowItem) {
+                    int useDuration = event.getDuration();
+                    int chargeDuration = CrossbowItem.getChargeDuration(itemStack);
+                    int quickChargeLevel = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.QUICK_CHARGE, itemStack);
+                    int quickChargeTicks = 5 * quickChargeLevel;
+                    //player.sendSystemMessage(Component.literal("Original draw duration: " + useDuration)); //debug code
+                    int adjustedDuration = (int) (useDuration - ((chargeDuration * drawSpeedMultiplier) + (quickChargeTicks * drawSpeedMultiplier)));
+                    adjustedDuration = Math.max(1, adjustedDuration);
+                    //player.sendSystemMessage(Component.literal("Adjusted draw duration: " + adjustedDuration)); //debug code
+                    event.setDuration(adjustedDuration);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event) {
         //Player target logic
         Entity entity = event.getEntity();
@@ -424,6 +450,8 @@ public class ModEvents {
                 player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
                     if (target == playerAbility.getTargetEntity()){
                         playerAbility.setTaunting(false);
+                        playerAbility.setTargetEntity(null);
+                        player.sendSystemMessage(Component.literal("Cleared taunted target! Target: " + playerAbility.getTargetEntity()));
                     }
                 });
 
@@ -444,34 +472,43 @@ public class ModEvents {
                 String className = playerClass.getRpgClass();
                 String subclassName = playerClass.getRpgSubclass();
                 ModNetworking.sendToPlayer(new ClassSelectionS2CPacket(className, subclassName), serverPlayer);
-                ClassAttributeManager.applyClassAttributes(serverPlayer, className);
+                ClassAttributeManager.applyClassAttributes(serverPlayer);
                 ClassAttributeManager.applyTalentAttributes(serverPlayer);
-            });
-            String playerClass = ClientClassData.getPlayerClass();
-            String playerSubclass = ClientClassData.getPlayerSubclass();
-            serverPlayer.getCapability(PlayerResourceProvider.PLAYER_RESOURCE).ifPresent(playerResource -> {
-                //Stamina active declarations
-                playerResource.setStaminaActive("Warrior".equals(playerClass));
+                serverPlayer.getCapability(PlayerResourceProvider.PLAYER_RESOURCE).ifPresent(playerResource -> {
+                    String warrior = Component.translatable("class.warrior.name").getString();
+                    String ranger = Component.translatable("class.ranger.name").getString();
+                    String mage = Component.translatable("class.mage.name").getString();
 
-                //Energy active declarations
-                playerResource.setEnergyActive("Ranger".equals(playerClass));
+                    String paladin = Component.translatable("subclass.paladin.name").getString();
+                    //Stamina active declarations
+                    playerResource.setStaminaActive(
+                            warrior.equals(className));
 
-                //Mana active declarations
-                if ("Mage".equals(playerClass)){
-                    playerResource.setManaActive(true);
-                } else playerResource.setManaActive("Paladin".equals(playerSubclass) && new PathOfThePaladinSubclass().isActive(serverPlayer));
+                    //Energy active declarations
+                    playerResource.setEnergyActive(
+                            ranger.equals(className));
 
-                double deltaTime = 1.0 / 40.0; //1 second is 40 ticks due to double counting
-                playerResource.updateRechargeRates(deltaTime);
 
-                ModNetworking.sendToPlayer(
-                        new PlayerResourcesS2CPacket(
-                                playerResource.getStamina(),
-                                playerResource.getMaxStamina(),
-                                playerResource.getEnergy(),
-                                playerResource.getMaxEnergy(),
-                                playerResource.getMana(),
-                                playerResource.getMaxMana()), serverPlayer);
+                    playerResource.setManaActive(
+                            mage.equals(className) ||
+                                    paladin.equals(subclassName) && new PathOfThePaladinSubclass().isActive(serverPlayer));
+
+                    double deltaTime = 1.0 / 40.0; //1 second is 40 ticks due to double counting
+                    playerResource.updateRechargeRates(deltaTime);
+
+                    ModNetworking.sendToPlayer(
+                            new PlayerResourcesS2CPacket(
+                                    playerResource.getMaxStamina(),
+                                    playerResource.getMaxEnergy(),
+                                    playerResource.getMaxMana(),
+                                    playerResource.getStamina(),
+                                    playerResource.getEnergy(),
+                                    playerResource.getMana()), serverPlayer);
+
+                    if (paladin.equals(subclassName) && new PathOfThePaladinSubclass().isActive(serverPlayer)){
+                        //serverPlayer.sendSystemMessage(Component.literal("You're a paladin! I just send your mana. You have " + playerResource.getMana() + "/" + playerResource.getMaxMana()));
+                    }
+                });
             });
 
             SecondWindTalent secondWindTalent = new SecondWindTalent();
@@ -493,7 +530,6 @@ public class ModEvents {
             }
 
             if (event.phase == TickEvent.Phase.END) {
-
                 //Charge logic
                 serverPlayer.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbilities -> {
                     if (playerAbilities.isCharging()) {
@@ -504,7 +540,7 @@ public class ModEvents {
 
                         ClientEvents.showChargeCancelMessage = true;
 
-                        Entity targetEntity = playerAbilities.getTargetEntity();
+                        Entity targetEntity = TargetingUtils.getTarget(serverPlayer);
                         if (targetEntity == null) {
                             playerAbilities.setCharging(false);
                             ClientEvents.showChargeCancelMessage = false;

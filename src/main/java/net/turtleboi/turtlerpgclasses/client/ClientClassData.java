@@ -1,15 +1,19 @@
 package net.turtleboi.turtlerpgclasses.client;
 
 public class ClientClassData {
-    private static String playerClass = "No Class";
-    private static String playerSubclass = "No Subclass";
+    private static String playerClass;
+    private static String playerSubclass;
 
-    public static void setPlayerClass(String newClass) {
-        playerClass = newClass;
+    public static void setPlayerClass(String className) {
+        playerClass = className;
     }
 
     public static String getPlayerClass() {
-        return playerClass;
+        if (playerClass != null){
+            return playerClass;
+        } else {
+            return "No Class";
+        }
     }
 
     public static void setPlayerSubclass(String newSubclass) {
@@ -17,7 +21,11 @@ public class ClientClassData {
     }
 
     public static String getPlayerSubclass() {
-        return playerSubclass;
+        if (playerSubclass != null){
+            return playerSubclass;
+        } else {
+            return "No Subclass";
+        }
     }
 }
 

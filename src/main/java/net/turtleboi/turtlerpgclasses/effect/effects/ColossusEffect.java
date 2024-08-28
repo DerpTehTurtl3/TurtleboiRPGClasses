@@ -8,8 +8,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.turtleboi.turtlecore.init.CoreAttributes;
-import net.turtleboi.turtlerpgclasses.init.ModAttributes;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.ColossusTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.ColossusTalent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

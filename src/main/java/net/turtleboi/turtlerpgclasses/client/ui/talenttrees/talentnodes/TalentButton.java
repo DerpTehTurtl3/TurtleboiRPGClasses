@@ -4,6 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 public abstract class TalentButton extends Button {
     private final TalentTree talentTree;
@@ -279,6 +283,94 @@ public abstract class TalentButton extends Button {
     }
 
     public abstract List<Component> generateDynamicTooltip();
+
+    protected MutableComponent buildValueComponent(int currentPoints, int maxPoints, boolean isShiftPressed,
+                                                   Function<Integer, Double> valueGetter) {
+        double value = valueGetter.apply(currentPoints);
+        double nextValue = isShiftPressed && currentPoints < maxPoints ? valueGetter.apply(currentPoints + 1) : value;
+
+        StringBuilder ranks = new StringBuilder();
+        for (int i = 1; i <= maxPoints; i++) {
+            if (i > 1) {
+                ranks.append("/");
+            }
+            ranks.append(valueGetter.apply(i));
+        }
+
+        return currentPoints != 0
+                ? Component.literal(" " + nextValue + " ")
+                .withStyle(isShiftPressed && currentPoints < maxPoints
+                        ? Style.EMPTY.withColor(TextColor.parseColor("#00FF00"))
+                        : Style.EMPTY)
+                : Component.literal(" " + ranks + " ")
+                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FF00")));
+    }
+
+    protected MutableComponent buildValuePercentComponent(int currentPoints, int maxPoints, boolean isShiftPressed,
+                                                   Function<Integer, Double> valueGetter) {
+        double value = valueGetter.apply(currentPoints);
+        double nextValue = isShiftPressed && currentPoints < maxPoints ? valueGetter.apply(currentPoints + 1) : value;
+
+        StringBuilder ranks = new StringBuilder();
+        for (int i = 1; i <= maxPoints; i++) {
+            if (i > 1) {
+                ranks.append("/");
+            }
+            ranks.append(valueGetter.apply(i)).append("%");
+        }
+
+        return currentPoints != 0
+                ? Component.literal(" " + nextValue + "% ")
+                .withStyle(isShiftPressed && currentPoints < maxPoints
+                        ? Style.EMPTY.withColor(TextColor.parseColor("#00FF00"))
+                        : Style.EMPTY)
+                : Component.literal(" " + ranks + " ")
+                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FF00")));
+    }
+
+    protected MutableComponent buildPlusValueComponent(int currentPoints, int maxPoints, boolean isShiftPressed,
+                                                       Function<Integer, Double> valueGetter) {
+        double value = valueGetter.apply(currentPoints);
+        double nextValue = isShiftPressed && currentPoints < maxPoints ? valueGetter.apply(currentPoints + 1) : value;
+
+        StringBuilder ranks = new StringBuilder();
+        for (int i = 1; i <= maxPoints; i++) {
+            if (i > 1) {
+                ranks.append("/");
+            }
+            ranks.append(valueGetter.apply(i));
+        }
+
+        return currentPoints != 0
+                ? Component.literal(" +" + nextValue + " ")
+                .withStyle(isShiftPressed && currentPoints < maxPoints
+                        ? Style.EMPTY.withColor(TextColor.parseColor("#00FF00"))
+                        : Style.EMPTY)
+                : Component.literal(" +" + ranks + " ")
+                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FF00")));
+    }
+
+    protected MutableComponent buildPlusValuePercentComponent(int currentPoints, int maxPoints, boolean isShiftPressed,
+                                                          Function<Integer, Double> valueGetter) {
+        double value = valueGetter.apply(currentPoints);
+        double nextValue = isShiftPressed && currentPoints < maxPoints ? valueGetter.apply(currentPoints + 1) : value;
+
+        StringBuilder ranks = new StringBuilder();
+        for (int i = 1; i <= maxPoints; i++) {
+            if (i > 1) {
+                ranks.append("/");
+            }
+            ranks.append(valueGetter.apply(i)).append("%");
+        }
+
+        return currentPoints != 0
+                ? Component.literal(" +" + nextValue + "% ")
+                .withStyle(isShiftPressed && currentPoints < maxPoints
+                        ? Style.EMPTY.withColor(TextColor.parseColor("#00FF00"))
+                        : Style.EMPTY)
+                : Component.literal(" +" + ranks + " ")
+                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FF00")));
+    }
 }
 
 

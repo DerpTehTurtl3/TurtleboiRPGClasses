@@ -6,10 +6,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.client.ClientClassData;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.TalentButton;
+import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.talents.common.*;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.talents.warrior.*;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Warrior;
-import net.turtleboi.turtlerpgclasses.rpg.talents.*;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.commonTalents.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.*;
 
 import java.util.Arrays;
 import java.util.List;

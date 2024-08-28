@@ -1,22 +1,20 @@
 package net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.talents.warrior;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.turtleboi.turtlecore.init.CoreAttributes;
-import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.BarbarianTalentTree;
+import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.JuggernautTalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentScreen;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.ActiveTalentButton;
-import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 import net.turtleboi.turtlerpgclasses.rpg.talents.Talent;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.SteelBarbsTalent;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.UnleashFuryTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.SteelBarbsTalent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +23,11 @@ import java.util.Map;
 public class pathOfTheJuggernautSubclassNode extends ActiveTalentButton {
     public pathOfTheJuggernautSubclassNode(TalentTree talentTree, Talent talent, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
         super(talentTree, talent, x, y, maxPoints, requiredPoints, alwaysActive, onPress);
+    }
+
+    @Override
+    public ResourceLocation getIconTexture() {
+        return new ResourceLocation(TurtleRPGClasses.MOD_ID, "textures/gui/talents/talent_icons/pathofthejuggernautsubclass_icon.png");
     }
 
     @Override
@@ -62,13 +65,13 @@ public class pathOfTheJuggernautSubclassNode extends ActiveTalentButton {
                 .withStyle(currentPoints == 0 ? Style.EMPTY.withColor(TextColor.parseColor("#00FF00")) :
                         Style.EMPTY);
 
-        tooltip.add(Component.translatable("talents.subclass.juggernaut")//Change this value for each talent
+        tooltip.add(Component.translatable("subclass.juggernaut.talent")//Change this value for each talent
                 .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFD52B")))
                 .append(Component.literal(" "))
                 .append(Component.translatable("talents.talent_type.subclass")
                         .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#808080")))
                 ));
-        tooltip.add(Component.translatable("talents.subclass.juggernaut.description"));
+        tooltip.add(Component.translatable("subclass.juggernaut.description"));
         tooltip.add(Component.literal(" "));
         tooltip.add(Component.translatable("talents.subclass.juggernaut.steel_barbs")
                 .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFD52B")))

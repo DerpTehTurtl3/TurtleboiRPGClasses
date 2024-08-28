@@ -37,7 +37,7 @@ public class Ranger extends Talent {
         applyModifier(player,
                 CoreAttributes.RANGED_DAMAGE.get(),
                 getAttributeName("RangedDamage"),
-                3.0,
+                2.0,
                 AttributeModifier.Operation.ADDITION);
     }
 
