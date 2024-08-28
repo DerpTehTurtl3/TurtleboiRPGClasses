@@ -12,16 +12,33 @@ public class PlayerClass {
         this.rpgSubclass = "No Subclass";
     }
     public String getRpgClass() {
-        return rpgClass;
+        if (rpgClass != null) {
+            return rpgClass;
+        } else {
+            return "No Class";
+        }
     }
-    public void setRpgClass(String rpgClass) {
-        this.rpgClass = rpgClass;
+
+    public void setRpgClass(String className) {
+        if (className != null) {
+            this.rpgClass = className;
+        } else {
+            this.rpgClass = "No Class";
+        }
     }
     public String getRpgSubclass() {
-        return rpgSubclass;
+        if (rpgSubclass != null) {
+            return rpgSubclass;
+        } else {
+            return "No Subclass";
+        }
     }
-    public void setRpgSubclass(String rpgSubclass) {
-        this.rpgSubclass = rpgSubclass;
+    public void setRpgSubclass(String subclassName) {
+        if (subclassName != null) {
+            this.rpgSubclass = subclassName;
+        } else {
+            this.rpgSubclass = "No Subclass";
+        }
     }
     public void copyFrom(PlayerClass source) {
         this.rpgClass = source.rpgClass;

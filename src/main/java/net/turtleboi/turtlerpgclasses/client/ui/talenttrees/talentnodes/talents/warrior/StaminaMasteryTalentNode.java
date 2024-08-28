@@ -6,14 +6,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.player.Player;
-import net.turtleboi.turtlerpgclasses.client.ClientClassData;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentTree;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.StatTalentButton;
-import net.turtleboi.turtlerpgclasses.rpg.classes.Warrior;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfTheBarbarianSubclass;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfTheJuggernautSubclass;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfThePaladinSubclass;
 import net.turtleboi.turtlerpgclasses.rpg.talents.Talent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfTheBarbarianSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfTheJuggernautSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfThePaladinSubclass;
 
 import java.util.ArrayList;
 import java.util.List;

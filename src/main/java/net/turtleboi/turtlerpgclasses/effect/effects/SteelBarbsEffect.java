@@ -5,7 +5,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.player.Player;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.SteelBarbsTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.SteelBarbsTalent;
 import org.jetbrains.annotations.NotNull;
 
 public class SteelBarbsEffect extends MobEffect {

@@ -6,6 +6,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
+import net.turtleboi.turtlerpgclasses.client.ui.cooldowns.CooldownOverlay;
+import net.turtleboi.turtlerpgclasses.client.ui.resources.ResourceOverlay;
 import net.turtleboi.turtlerpgclasses.network.ModNetworking;
 import net.turtleboi.turtlerpgclasses.network.packet.ClassSelectionC2SPacket;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Mage;
@@ -19,6 +21,10 @@ public class ClassSelectionScreen extends Screen {
     public ClassSelectionScreen() {
         super(Component.translatable("SelectClass"));
     }
+
+    String warrior = Component.translatable("class.warrior.name").getString();
+    String ranger = Component.translatable("class.ranger.name").getString();
+    String mage = Component.translatable("class.mage.name").getString();
 
     @Override
     protected void init() {
@@ -38,7 +44,7 @@ public class ClassSelectionScreen extends Screen {
                 Component.translatable("class.warrior.description"),
                 Component.translatable("class.warrior.features"),
                 button ->
-                        handleClassSelection("Warrior")
+                        handleClassSelection(warrior)
         ));
 
         startX += buttonWidth + buttonSpacing;
@@ -52,7 +58,7 @@ public class ClassSelectionScreen extends Screen {
                 Component.translatable("class.ranger.description"),
                 Component.translatable("class.ranger.features"),
                 button ->
-                        handleClassSelection("Ranger")
+                        handleClassSelection(ranger)
         ));
 
         startX += buttonWidth + buttonSpacing;
@@ -66,7 +72,7 @@ public class ClassSelectionScreen extends Screen {
                 Component.translatable("class.mage.description"),
                 Component.translatable("class.mage.features"),
                 button ->
-                        handleClassSelection("Mage")
+                        handleClassSelection(mage)
         ));
     }
 
@@ -75,14 +81,16 @@ public class ClassSelectionScreen extends Screen {
         if (player != null) {
             TalentStates.resetAllTalents(player);
             TalentStates.setPurchasedTalentPoints(player, 0);
-                ModNetworking.sendToServer(new ClassSelectionC2SPacket(className, "No Subclass"));
-                if ("Warrior".equals(className)) {
+                ModNetworking.sendToServer(new ClassSelectionC2SPacket(className, null));
+                if (warrior.equals(className)) {
                     new Warrior().setActive(player);
-                } else if ("Ranger".equals(className)) {
+                } else if (ranger.equals(className)) {
                     new Ranger().setActive(player);
-                } else if ("Mage".equals(className)) {
+                } else if (mage.equals(className)) {
                     new Mage().setActive(player);
                 }
+            CooldownOverlay.initializeSlots(player);
+            ResourceOverlay.initializeResourceBars(player);
                 this.onClose();
         }
     }

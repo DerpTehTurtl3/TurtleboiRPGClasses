@@ -17,16 +17,16 @@ import java.util.Optional;
 
 public class StatTalentButton extends TalentButton {
     private static final ResourceLocation TALENT_TREE_TEXTURES = new ResourceLocation(TurtleRPGClasses.MOD_ID, "textures/gui/talents/talent_widgets.png");
-    private final Talent talent;
+    protected Talent talentClass;
 
-    public StatTalentButton(TalentTree talentTree, Talent talent, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
-        super(talentTree, talent.getTalentName(), x, y, 26, 26, maxPoints,  requiredPoints, Component.empty(), alwaysActive, onPress);
-        this.talent = talent;
+    public StatTalentButton(TalentTree talentTree, Talent talentClass, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
+        super(talentTree, talentClass.getTalentName(), x, y, 26, 26, maxPoints,  requiredPoints, Component.empty(), alwaysActive, onPress);
+        this.talentClass = talentClass;
         this.maxPoints = maxPoints;
     }
 
     public ResourceLocation getIconTexture() {
-        return talent.getIconTexture();
+        return talentClass.getIconTexture();
     }
 
     public void drawTalentIcon(PoseStack poseStack, int x, int y) {

@@ -49,6 +49,30 @@ public class ModItems {
     public static final RegistryObject<Item> NETHERITE_HANDAXE = ITEMS.register("netherite_handaxe",
             () -> new NetheriteHandaxeItem(Tiers.NETHERITE, 2, -2.0F, new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
 
+    public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand",
+            () -> new AmethystWandItem(new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
+
+    public static final RegistryObject<Item> ARCANE_STAFF = ITEMS.register("arcane_staff",
+            () -> new ArcaneStaffItem(new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
+
+    public static final RegistryObject<Item> PYRO_WAND = ITEMS.register("pyro_wand",
+            () -> new PyroWandItem(new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
+
+    public static final RegistryObject<Item> INFERNO_STAFF = ITEMS.register("inferno_staff",
+            () -> new InfernoStaffItem(new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
+
+    public static final RegistryObject<Item> DEATH_RATTLE = ITEMS.register("death_rattle",
+            () -> new DeathRattleItem(new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
+
+    public static final RegistryObject<Item> NECROMANCER_STAFF = ITEMS.register("necromancer_staff",
+            () -> new NecromancerStaffItem(new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
+
+    public static final RegistryObject<Item> MAGICAL_STICK = ITEMS.register("magical_stick",
+            () -> new MagicalStickItem(new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
+
+    public static final RegistryObject<Item> DRUID_STAFF = ITEMS.register("druid_staff",
+            () -> new DruidStaffItem(new Item.Properties().tab(ModCreativeModeTab.TURTLERPGCLASSES_TAB)));
+
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
     }

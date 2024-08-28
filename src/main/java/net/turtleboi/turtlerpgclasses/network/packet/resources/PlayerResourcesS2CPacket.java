@@ -1,6 +1,10 @@
 package net.turtleboi.turtlerpgclasses.network.packet.resources;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 import net.turtleboi.turtlerpgclasses.client.ClientResourceData;
 
@@ -14,43 +18,48 @@ public class PlayerResourcesS2CPacket {
     private final int currentMana;
     private final int maxMana;
 
-    public PlayerResourcesS2CPacket(int currentStamina, int maxStamina, int currentEnergy, int maxEnergy, int currentMana, int maxMana) {
-        this.currentStamina = currentStamina;
+    public PlayerResourcesS2CPacket(int maxStamina, int maxEnergy, int maxMana, int currentStamina,  int currentEnergy,  int currentMana) {
         this.maxStamina = maxStamina;
-        this.currentEnergy = currentEnergy;
         this.maxEnergy = maxEnergy;
-        this.currentMana = currentMana;
         this.maxMana = maxMana;
+        this.currentStamina = currentStamina;
+        this.currentEnergy = currentEnergy;
+        this.currentMana = currentMana;
     }
 
     public PlayerResourcesS2CPacket(FriendlyByteBuf buf) {
-        this.currentStamina = buf.readInt();
         this.maxStamina = buf.readInt();
-        this.currentEnergy = buf.readInt();
         this.maxEnergy = buf.readInt();
-        this.currentMana = buf.readInt();
         this.maxMana = buf.readInt();
+        this.currentStamina = buf.readInt();
+        this.currentEnergy = buf.readInt();
+        this.currentMana = buf.readInt();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(currentStamina);
         buf.writeInt(maxStamina);
-        buf.writeInt(currentEnergy);
         buf.writeInt(maxEnergy);
-        buf.writeInt(currentMana);
         buf.writeInt(maxMana);
+        buf.writeInt(currentStamina);
+        buf.writeInt(currentEnergy);
+        buf.writeInt(currentMana);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
             // HERE WE ARE ON THE CLIENT :)
-            ClientResourceData.setStamina(currentStamina);
-            ClientResourceData.setMaxStamina(maxStamina);
-            ClientResourceData.setEnergy(currentEnergy);
-            ClientResourceData.setMaxEnergy(maxEnergy);
-            ClientResourceData.setMana(currentMana);
-            ClientResourceData.setMaxMana(maxMana);
+            Minecraft minecraft = Minecraft.getInstance();
+            Player player = minecraft.player;
+            if (player != null){
+                //player.sendSystemMessage(Component.literal("Sending resource data!")); //debug code
+                ClientResourceData.setMaxStamina(maxStamina);
+                ClientResourceData.setMaxEnergy(maxEnergy);
+                ClientResourceData.setMaxMana(maxMana);
+                ClientResourceData.setStamina(currentStamina);
+                ClientResourceData.setEnergy(currentEnergy);
+                ClientResourceData.setMana(currentMana);
+            }
         });
         return true;
     }

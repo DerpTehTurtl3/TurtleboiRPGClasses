@@ -6,10 +6,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.turtleboi.turtlerpgclasses.client.ui.MovableUIComponent;
 import net.turtleboi.turtlerpgclasses.config.UIConfig;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfTheBarbarianSubclass;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfTheJuggernautSubclass;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfThePaladinSubclass;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.ActiveAbility;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfTheBarbarianSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfTheJuggernautSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfThePaladinSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.*;
 import net.turtleboi.turtlerpgclasses.util.KeyBinding;
 
 import java.util.ArrayList;

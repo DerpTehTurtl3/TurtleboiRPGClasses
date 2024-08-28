@@ -6,6 +6,8 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.turtleboi.turtlecore.network.CoreNetworking;
@@ -80,31 +82,48 @@ public class TalentPointAllocator {
     }
 
     private void handleBuyPoint(CustomButton button) {
-        if (isExperienceSynced) {
-            Player player = Minecraft.getInstance().player;
-            if (player != null) {
+        Player player = Minecraft.getInstance().player;
+        if (player != null) {
+            if (isExperienceSynced) {
                 int currentXP = player.totalExperience;
                 int xpNeeded = calculateXPNeeded(pointsToBuy);
                 //System.out.println("Current XP: " + currentXP + ", XP Needed: " + xpNeeded); //debug code
-                if (currentXP >= xpNeeded) {
+                if (player.isCreative()) {
+                    pointsToBuy++;
+                    //System.out.println("Points to Buy: " + pointsToBuy);  //debug code
+                    updateButtonStates();
+                } else if (currentXP >= xpNeeded && !player.isCreative()) {
                     pointsToBuy++;
                     //System.out.println("Points to Buy: " + pointsToBuy);  //debug code
                     updateButtonStates();
                 }
+            } else {
+                requestExperienceSync();
             }
-        } else {
-            requestExperienceSync();
         }
     }
 
     private void handleConfirmPurchase(CustomButton button) {
-        if (isExperienceSynced) {
-            Player player = Minecraft.getInstance().player;
-            if (player != null) {
+        Player player = Minecraft.getInstance().player;
+        if (player != null) {
+            if (isExperienceSynced) {
+
                 int currentXP = player.totalExperience;
                 int xpNeeded = calculateXPNeeded(pointsToBuy);
                 //System.out.println("Current XP: " + currentXP + ", XP Needed: " + xpNeeded);  //debug code
-                if (currentXP >= xpNeeded) {
+                if (player.isCreative()) {
+                    player.getCapability(TalentStatesProvider.TALENT_STATES).ifPresent(talentStates -> {
+                        TalentStates.addPurchasedTalentPoints(pointsToBuy);
+
+                        for (TalentButton talentButton : talentButtons) {
+                            talentButton.forceUpdateStateBasedOnParents();
+                        }
+                    });
+
+                    pointsToBuy = 0;
+                    updateButtonStates();
+                    isExperienceSynced = false;
+                } else if (currentXP >= xpNeeded && !player.isCreative()) {
                     //System.out.println("Confirming purchase of " + pointsToBuy + " points.");  //debug code
                     CoreNetworking.sendToServer(new RemoveExperienceC2SPacket(xpNeeded));
                     player.getCapability(TalentStatesProvider.TALENT_STATES).ifPresent(talentStates -> {
@@ -119,9 +138,9 @@ public class TalentPointAllocator {
                     updateButtonStates();
                     isExperienceSynced = false;
                 }
+            } else {
+                requestExperienceSync();
             }
-        } else {
-            requestExperienceSync();
         }
     }
 
@@ -163,7 +182,7 @@ public class TalentPointAllocator {
         if (player != null) {
             int currentXP = player.totalExperience;
             int xpNeeded = calculateXPNeeded(pointsToBuy + 1);
-            buyPointButton.active = currentXP >= xpNeeded;
+            buyPointButton.active = player.isCreative() || currentXP >= xpNeeded;
             subtractPointButton.active = pointsToBuy > 0;
             confirmPurchaseButton.active = pointsToBuy > 0;
         }

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.turtleboi.turtlecore.util.PartyUtils;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.GuardiansOathTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.GuardiansOathTalent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;

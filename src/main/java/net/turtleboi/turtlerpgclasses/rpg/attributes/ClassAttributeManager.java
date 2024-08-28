@@ -1,34 +1,57 @@
 package net.turtleboi.turtlerpgclasses.rpg.attributes;
 
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fml.common.Mod;
 import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.capabilities.PlayerClassProvider;
-import net.turtleboi.turtlerpgclasses.effect.ModEffects;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
+import net.turtleboi.turtlerpgclasses.network.ModNetworking;
+import net.turtleboi.turtlerpgclasses.network.packet.ClassSelectionS2CPacket;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Warrior;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Ranger;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Mage;
-import net.turtleboi.turtlerpgclasses.rpg.talents.*;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.GuardiansOathTalent;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.WarlordsPresenceTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.commonTalents.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.EfficientEnergyTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.RenownedHunterTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.WeakPointsTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.GuardiansOathTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.WarlordsPresenceTalent;
 
 import java.util.*;
 
 public class ClassAttributeManager {
-    public static void applyClassAttributes(Player player, String className) {
-        resetAttributes(player);
-        switch (className) {
-            case "Warrior":
-                new Warrior().applyAttributes(player);
-                break;
-            case "Ranger":
-                new Ranger().applyAttributes(player);
-                break;
-            case "Mage":
-                new Mage().applyAttributes(player);
-                break;
+    private static final String warrior = Component.translatable("class.warrior.name").getString();
+    private static final String ranger = Component.translatable("class.ranger.name").getString();
+    private static final String mage = Component.translatable("class.mage.name").getString();
+
+    private static final String barbarian = Component.translatable("subclass.barbarian.name").getString();
+    private static final String juggernaut = Component.translatable("subclass.juggernaut.name").getString();
+    private static final String paladin = Component.translatable("subclass.paladin.name").getString();
+
+    public static void applyClassAttributes(Player player) {
+        Warrior warriorClass = new Warrior();
+        if (warriorClass.isActive(player)) {
+            warriorClass.applyAttributes(player);
+        } else {
+            warriorClass.removeModifier(player);
+        }
+
+        Ranger rangerClass = new Ranger();
+        if (rangerClass.isActive(player)) {
+            rangerClass.applyAttributes(player);
+        } else {
+            rangerClass.removeModifier(player);
+        }
+
+        Mage mageClass = new Mage();
+        if (mageClass.isActive(player)) {
+            mageClass.applyAttributes(player);
+        } else {
+            mageClass.removeModifier(player);
         }
     }
 
@@ -73,18 +96,29 @@ public class ClassAttributeManager {
         PathOfThePaladinSubclass pathOfThePaladinSubclass = new PathOfThePaladinSubclass();
 
         if (pathOfTheBarbarianSubclass.isActive(player)) {
-            player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerSubclass ->
-                    playerSubclass.setRpgSubclass(PathOfTheBarbarianSubclass.getSubclassName()));
+            player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerClass -> {
+                String subclass = PathOfTheBarbarianSubclass.getSubclassName();
+                playerClass.setRpgSubclass(subclass);
+                ModNetworking.sendToPlayer(new ClassSelectionS2CPacket(playerClass.getRpgClass(), subclass), (ServerPlayer) player);
+            });
         } else if (pathOfTheJuggernautSubclass.isActive(player)) {
-            player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerSubclass ->
-                    playerSubclass.setRpgSubclass(PathOfTheJuggernautSubclass.getSubclassName()));
+            player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerClass -> {
+                String subclass = PathOfTheJuggernautSubclass.getSubclassName();
+                playerClass.setRpgSubclass(subclass);
+                ModNetworking.sendToPlayer(new ClassSelectionS2CPacket(playerClass.getRpgClass(), subclass), (ServerPlayer) player);
+            });
         } else if (pathOfThePaladinSubclass.isActive(player)) {
-            player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerSubclass ->
-                    playerSubclass.setRpgSubclass(PathOfThePaladinSubclass.getSubclassName()));
+            player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerClass -> {
+                String subclass = PathOfThePaladinSubclass.getSubclassName();
+                playerClass.setRpgSubclass(subclass);
+                ModNetworking.sendToPlayer(new ClassSelectionS2CPacket(playerClass.getRpgClass(), subclass), (ServerPlayer) player);
+            });
             pathOfThePaladinSubclass.applyAttributes(player);
         } else {
-            player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerSubclass ->
-                    playerSubclass.setRpgSubclass("No Subclass"));
+            player.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerClass -> {
+                playerClass.setRpgSubclass(null);
+                ModNetworking.sendToPlayer(new ClassSelectionS2CPacket(playerClass.getRpgClass(), null), (ServerPlayer) player);
+            });
             pathOfThePaladinSubclass.removeModifier(player);
         }
 
@@ -143,6 +177,34 @@ public class ClassAttributeManager {
         } else if (guardiansOathTalent.getPoints(player) == 0) {
             guardiansOathTalent.removeModifier(player);
         }
+
+        WeakPointsTalent weakPointsTalent = new WeakPointsTalent();
+        if (weakPointsTalent.getPoints(player) >= 1) {
+            weakPointsTalent.applyAttributes(player);
+        } else if (weakPointsTalent.getPoints(player) == 0) {
+            weakPointsTalent.removeModifier(player);
+        }
+
+        LethalityTalent lethalityTalent = new LethalityTalent();
+        if (lethalityTalent.getPoints(player) >= 1) {
+            lethalityTalent.applyAttributes(player);
+        } else if (lethalityTalent.getPoints(player) == 0) {
+            lethalityTalent.removeModifier(player);
+        }
+
+        EfficientEnergyTalent efficientEnergyTalent = new EfficientEnergyTalent();
+        if (efficientEnergyTalent.getPoints(player) >= 1) {
+            efficientEnergyTalent.applyAttributes(player);
+        } else if (efficientEnergyTalent.getPoints(player) == 0) {
+            efficientEnergyTalent.removeModifier(player);
+        }
+
+        RenownedHunterTalent renownedHunterTalent = new RenownedHunterTalent();
+        if (renownedHunterTalent.getPoints(player) >= 1) {
+            renownedHunterTalent.applyAttributes(player);
+        } else if (renownedHunterTalent.getPoints(player) == 0) {
+            renownedHunterTalent.removeModifier(player);
+        }
     }
 
     private static final List<Attribute> RPG_ATTRIBUTES = Arrays.asList(
@@ -164,7 +226,8 @@ public class ClassAttributeManager {
             CoreAttributes.CRITICAL_CHANCE.get(),
             CoreAttributes.DAMAGE_RESISTANCE.get(),
             CoreAttributes.LIFE_STEAL.get(),
-            CoreAttributes.HEALING_EFFECTIVENESS.get()
+            CoreAttributes.HEALING_EFFECTIVENESS.get(),
+            CoreAttributes.ARMOR_PENETRATION.get()
     );
 
     public static void resetAttributes(Player player) {

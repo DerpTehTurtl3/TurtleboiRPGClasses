@@ -5,8 +5,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.TalentButton;
 import net.turtleboi.turtlerpgclasses.rpg.attributes.ClassAttributeManager;
-import net.turtleboi.turtlerpgclasses.rpg.talents.*;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.commonTalents.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class TalentStates {
     }
 
     public static void resetAllTalents(Player player) {
-        ClassAttributeManager.applyTalentAttributes(player);
+        //ClassAttributeManager.applyTalentAttributes(player);
         ClassAttributeManager.resetAttributes(player);
         new VigorTalent().resetTalent(player);
         new MightyBlowsTalent().resetTalent(player);

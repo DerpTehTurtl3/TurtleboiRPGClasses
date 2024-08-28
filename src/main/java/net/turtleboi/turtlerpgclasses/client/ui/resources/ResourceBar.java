@@ -16,13 +16,13 @@ public class ResourceBar {
 
     private int x;
     private int y;
-    private final int filledWidth;
+    private final float filledWidth;
     private final Component text;
     private final int textColor;
     private final int barTypeYOffset;
     private final boolean isMain;
 
-    public ResourceBar(int x, int y, int filledWidth, Component text, int textColor, int barTypeYOffset, boolean isMain) {
+    public ResourceBar(int x, int y, float filledWidth, Component text, int textColor, int barTypeYOffset, boolean isMain) {
         this.x = x;
         this.y = y;
         this.filledWidth = filledWidth;
@@ -35,7 +35,7 @@ public class ResourceBar {
     public void render(PoseStack poseStack, Font font) {
         RenderSystem.setShaderTexture(0, resourceBars);
         GuiComponent.blit(poseStack, x, y, 0, barTypeYOffset, barWidth, barHeight, 80, 90);
-        GuiComponent.blit(poseStack, x + barXOffset, y, barXOffset, barTypeYOffset + barHeight, filledWidth, barHeight, 80, 90);
+        GuiComponent.blit(poseStack, x + barXOffset, y, barXOffset, barTypeYOffset + barHeight, (int) filledWidth, barHeight, 80, 90);
         int textWidth = font.width(text) / 2;
         int textX = x + (barWidth / 2) - textWidth;
         int textY = y + (barHeight / 2); // Adjust textY to center text vertically
@@ -54,7 +54,7 @@ public class ResourceBar {
     public static class Builder {
         private int x;
         private int y;
-        private int filledWidth;
+        private float filledWidth;
         private Component text;
         private int textColor;
         private int barTypeYOffset;
@@ -66,7 +66,7 @@ public class ResourceBar {
             return this;
         }
 
-        public Builder setFilledWidth(int filledWidth) {
+        public Builder setFilledWidth(float filledWidth) {
             this.filledWidth = filledWidth;
             return this;
         }

@@ -6,30 +6,46 @@ import net.turtleboi.turtlerpgclasses.client.ClientClassData;
 import java.util.function.Supplier;
 
 public class ClassSelectionS2CPacket {
-    private String playerClass = "No class";
-    private String playerSubclass = "No subclass";
+    private final String playerClassName;
+    private final String playerSubclassName;
 
-    public ClassSelectionS2CPacket(String playerClass, String playerSubclass) {
-        this.playerClass = playerClass;
-        this.playerSubclass = playerSubclass;
+    private String getPlayerClassName() {
+        if (playerClassName != null) {
+            return playerClassName;
+        } else {
+            return "No Class";
+        }
+    }
+
+    public String getPlayerSubclassName() {
+        if (playerSubclassName != null) {
+            return playerSubclassName;
+        } else {
+            return "No Class";
+        }
+    }
+
+    public ClassSelectionS2CPacket(String className, String subclassName) {
+        playerClassName = className;
+        playerSubclassName = subclassName;
     }
 
     public ClassSelectionS2CPacket(FriendlyByteBuf buf) {
-        this.playerClass = buf.readUtf();
-        this.playerSubclass = buf.readUtf();
+        playerClassName = buf.readUtf(32767);
+        playerSubclassName = buf.readUtf(32767);
     }
 
     public void toBytes(FriendlyByteBuf buf){
-        buf.writeUtf(playerClass);
-        buf.writeUtf(playerSubclass);
+        buf.writeUtf(getPlayerClassName());
+        buf.writeUtf(getPlayerSubclassName());
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
             // HERE WE ARE ON THE CLIENT :)
-            ClientClassData.setPlayerClass(playerClass);
-            ClientClassData.setPlayerSubclass(playerSubclass);
+            ClientClassData.setPlayerClass(getPlayerClassName());
+            ClientClassData.setPlayerSubclass(getPlayerSubclassName());
         });
         return true;
     }

@@ -9,10 +9,8 @@ import net.turtleboi.turtlerpgclasses.capabilities.resources.PlayerResourceProvi
 import net.turtleboi.turtlerpgclasses.client.ClientClassData;
 import net.turtleboi.turtlerpgclasses.network.ModNetworking;
 import net.turtleboi.turtlerpgclasses.network.packet.resources.PlayerResourcesS2CPacket;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfTheBarbarianSubclass;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.ActiveAbility;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.UnleashFuryTalent;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.WarlordsPresenceTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.ActiveAbility;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.WarlordsPresenceTalent;
 
 import java.util.function.Supplier;
 
@@ -38,12 +36,12 @@ public class WrathOfTheWarlordC2SPacket {
             player.getCapability(PlayerResourceProvider.PLAYER_RESOURCE).ifPresent(playerResource -> {
                 ModNetworking.sendToPlayer(
                         new PlayerResourcesS2CPacket(
-                                playerResource.getStamina(),
                                 playerResource.getMaxStamina(),
-                                playerResource.getEnergy(),
                                 playerResource.getMaxEnergy(),
-                                playerResource.getMana(),
-                                playerResource.getMaxMana()), player);
+                                playerResource.getMaxMana(),
+                                playerResource.getStamina(),
+                                playerResource.getEnergy(),
+                                playerResource.getMana()), player);
                 String playerClass = ClientClassData.getPlayerClass();
                 if ("Warrior".equals(playerClass)) {
                     ActiveAbility ability = null;

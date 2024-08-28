@@ -51,7 +51,7 @@ public class ResetTalentsCommand {
             }
         });
         CooldownOverlay.initializeSlots(player);
-        ResourceOverlay.initializeResourceBars();
+        ResourceOverlay.initializeResourceBars(player);
 
         player.sendSystemMessage(Component.literal("Your talents have been reset"));
         return 1;

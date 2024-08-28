@@ -6,7 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.player.Player;
-import net.turtleboi.turtlerpgclasses.rpg.talents.MomentumTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.MomentumTalent;
 import org.jetbrains.annotations.NotNull;
 
 public class MomentumEffect extends MobEffect {

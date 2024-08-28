@@ -11,19 +11,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.turtleboi.turtlecore.client.render.ArrowRenderer;
-import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.client.render.AuraRenderer;
 import net.turtleboi.turtlerpgclasses.client.ui.ClassSelectionScreen;
 import net.turtleboi.turtlerpgclasses.client.ui.cooldowns.CooldownOverlay;
 import net.turtleboi.turtlerpgclasses.client.ui.resources.ResourceOverlay;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.TalentScreen;
-import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 import net.turtleboi.turtlerpgclasses.network.ModNetworking;
 import net.turtleboi.turtlerpgclasses.network.packet.abilities.*;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.GuardiansOathTalent;
-import net.turtleboi.turtlerpgclasses.rpg.talents.active.WarlordsPresenceTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.GuardiansOathTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.WarlordsPresenceTalent;
 import net.turtleboi.turtlerpgclasses.util.KeyBinding;
 
 public class ClientEvents {
@@ -128,7 +125,7 @@ public class ClientEvents {
                     lastScreenHeight = currentHeight;
                     if (minecraft.player != null) {
                         CooldownOverlay.initializeSlots(minecraft.player);
-                        ResourceOverlay.initializeResourceBars();
+                        ResourceOverlay.initializeResourceBars(minecraft.player);
                     }
                 }
             }

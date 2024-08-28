@@ -10,14 +10,15 @@ import net.turtleboi.turtlerpgclasses.capabilities.PlayerClassProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
 import net.turtleboi.turtlerpgclasses.client.ClientClassData;
 import net.turtleboi.turtlerpgclasses.client.ui.cooldowns.CooldownOverlay;
+import net.turtleboi.turtlerpgclasses.client.ui.resources.ResourceOverlay;
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.TalentButton;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Mage;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Ranger;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Warrior;
 import net.turtleboi.turtlerpgclasses.rpg.classes.subclasses.Barbarian;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfTheBarbarianSubclass;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfTheJuggernautSubclass;
-import net.turtleboi.turtlerpgclasses.rpg.talents.PathOfThePaladinSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfTheBarbarianSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfTheJuggernautSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfThePaladinSubclass;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -189,5 +190,6 @@ public class TalentScreen extends Screen {
     public void onClose() {
         super.onClose();
         CooldownOverlay.initializeSlots(getMinecraft().player);
+        ResourceOverlay.initializeResourceBars(getMinecraft().player);
     }
 }

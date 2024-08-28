@@ -32,7 +32,7 @@ public class paladinSubclassNode extends CapstoneTalentButton {
                 .append(Component.translatable("talents.talent_type.subcapstone")
                         .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#808080")))
                 ));
-        tooltip.add(Component.translatable("talents.subclass.paladin.description"));
+        tooltip.add(Component.translatable("subclass.paladin.description"));
         tooltip.add(Component.translatable("talents.reset_points")
                 .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#555555"))));
         return tooltip;

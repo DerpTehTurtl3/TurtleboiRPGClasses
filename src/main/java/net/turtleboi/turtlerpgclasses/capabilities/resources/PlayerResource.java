@@ -1,16 +1,19 @@
 package net.turtleboi.turtlerpgclasses.capabilities.resources;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.turtleboi.turtlerpgclasses.init.ModAttributes;
+
+import java.awt.*;
+import java.awt.desktop.SystemEventListener;
 
 @AutoRegisterCapability
 public class PlayerResource {
     private int stamina, energy, mana;
     private boolean staminaActive, energyActive, manaActive;
     private static final int MIN_RESOURCE = 0;
-    private double staminaRecharge = 0.1, energyRecharge = 2.0, manaRecharge = 0.33; // Resources per second Stamina 1/10s Energy 2/1s Mana 1/3s
     private double staminaBuffer = 0.0, energyBuffer = 0.0, manaBuffer = 0.0;
 
     private final Player player;
@@ -32,7 +35,7 @@ public class PlayerResource {
         this.stamina = Math.max(stamina - sub, MIN_RESOURCE);
     }
     public void setStamina(int stamina) {
-        this.stamina = stamina;
+        this.stamina = Math.min(stamina, getMaxStamina());
     }
     public int getMaxStamina() {
         return (int) player.getAttributeValue(ModAttributes.MAX_STAMINA.get());
@@ -44,11 +47,9 @@ public class PlayerResource {
         return this.staminaActive;
     }
     public double getStaminaRecharge() {
-        return staminaRecharge;
+        return player.getAttributeValue(ModAttributes.STAMINA_RECHARGE.get());
     }
-    public void setStaminaRecharge(double staminaRecharge) {
-        this.staminaRecharge = staminaRecharge;
-    }
+
     public int getEnergy() {
         return energy;
     }
@@ -59,7 +60,7 @@ public class PlayerResource {
         this.energy = Math.max(energy - sub, MIN_RESOURCE);
     }
     public void setEnergy(int energy) {
-        this.energy = energy;
+        this.energy = Math.min(energy, getMaxEnergy());
     }
     public int getMaxEnergy() {
         return (int) player.getAttributeValue(ModAttributes.MAX_ENERGY.get());
@@ -71,11 +72,9 @@ public class PlayerResource {
         return this.energyActive;
     }
     public double getEnergyRecharge() {
-        return energyRecharge;
+        return player.getAttributeValue(ModAttributes.ENERGY_RECHARGE.get());
     }
-    public void setEnergyRecharge(double energyRecharge) {
-        this.energyRecharge = energyRecharge;
-    }
+
     public int getMana() {
         return mana;
     }
@@ -86,7 +85,7 @@ public class PlayerResource {
         this.mana = Math.max(mana - sub, MIN_RESOURCE);
     }
     public void setMana(int mana) {
-        this.mana = mana;
+        this.mana = Math.min(mana, getMaxMana());
     }
     public int getMaxMana() {
         return (int) player.getAttributeValue(ModAttributes.MAX_MANA.get());
@@ -98,10 +97,7 @@ public class PlayerResource {
         return this.manaActive;
     }
     public double getManaRecharge() {
-        return manaRecharge;
-    }
-    public void setManaRecharge(double manaRecharge) {
-        this.manaRecharge = manaRecharge;
+        return player.getAttributeValue(ModAttributes.MANA_RECHARGE.get());
     }
 
     public void resetResources() {
@@ -116,9 +112,6 @@ public class PlayerResource {
         this.staminaActive = source.staminaActive;
         this.energyActive = source.energyActive;
         this.manaActive = source.manaActive;
-        this.staminaRecharge = source.staminaRecharge;
-        this.energyRecharge = source.energyRecharge;
-        this.manaRecharge = source.manaRecharge;
     }
 
     public void saveNBTData(CompoundTag nbt) {
@@ -128,9 +121,6 @@ public class PlayerResource {
         nbt.putBoolean("staminaActive", staminaActive);
         nbt.putBoolean("energyActive", energyActive);
         nbt.putBoolean("manaActive", manaActive);
-        nbt.putDouble("staminaRecharge", staminaRecharge);
-        nbt.putDouble("energyRecharge", energyRecharge);
-        nbt.putDouble("manaRecharge", manaRecharge);
     }
     public void loadNBTData(CompoundTag nbt) {
         stamina = nbt.getInt("stamina");
@@ -139,32 +129,38 @@ public class PlayerResource {
         staminaActive = nbt.getBoolean("staminaActive");
         energyActive = nbt.getBoolean("energyActive");
         manaActive = nbt.getBoolean("manaActive");
-        staminaRecharge = nbt.getDouble("staminaRecharge");
-        energyRecharge = nbt.getDouble("energyRecharge");
-        manaRecharge = nbt.getDouble("manaRecharge");
     }
 
     public void updateRechargeRates(double deltaTime) {
         if (staminaActive) {
-            staminaBuffer += staminaRecharge * deltaTime;
+            double staminaRegenRate = getStaminaRecharge();
+            staminaBuffer += getStaminaRecharge() * deltaTime;
             while (staminaBuffer >= 1.0) {
                 addStamina(1);
+                System.out.println("Adding stamina! Current regeneration is " + staminaRegenRate + " stamina per second");
                 staminaBuffer -= 1.0;
             }
+            this.stamina = Math.min(this.stamina, getMaxStamina());
         }
         if (energyActive) {
-            energyBuffer += energyRecharge * deltaTime;
+            double energyRechargeRate = getEnergyRecharge();
+            energyBuffer += getEnergyRecharge() * deltaTime;
             while (energyBuffer >= 1.0) {
                 addEnergy(1);
+                System.out.println("Adding energy! Current regeneration is " + energyRechargeRate + " energy per second");
                 energyBuffer -= 1.0;
             }
+            this.energy = Math.min(this.energy, getMaxEnergy());
         }
         if (manaActive) {
-            manaBuffer += manaRecharge * deltaTime;
+            double manaRechargeRate = getManaRecharge();
+            manaBuffer += getManaRecharge() * deltaTime;
             while (manaBuffer >= 1.0) {
                 addMana(1);
+                System.out.println("Adding mana! Current regeneration is " + manaRechargeRate + " mana per second");
                 manaBuffer -= 1.0;
             }
+            this.mana = Math.min(this.mana, getMaxMana());
         }
     }
 }
