@@ -6,9 +6,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import net.turtleboi.turtlerpgclasses.capabilities.PlayerClassProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.resources.PlayerResourceProvider;
+import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 import net.turtleboi.turtlerpgclasses.network.ModNetworking;
 import net.turtleboi.turtlerpgclasses.rpg.attributes.ClassAttributeManager;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static net.turtleboi.turtlerpgclasses.rpg.attributes.ClassAttributeManager.applyClassAttributes;
@@ -67,10 +69,13 @@ public class ClassSelectionC2SPacket {
                 String mage = Component.translatable("class.mage.name").getString();
                 if (warrior.equals(playerClassName)){
                     playerResource.setStamina(playerResource.getMaxStamina());
+                    Objects.requireNonNull(player.getAttribute(ModAttributes.STAMINA_RECHARGE.get())).setBaseValue(0.1D);
                 } else if (ranger.equals(playerClassName)){
                     playerResource.setEnergy(playerResource.getMaxEnergy());
+                    Objects.requireNonNull(player.getAttribute(ModAttributes.ENERGY_RECHARGE.get())).setBaseValue(4.0D);
                 } else if (mage.equals(playerClassName)){
                     playerResource.setMana(playerResource.getMaxMana());
+                    Objects.requireNonNull(player.getAttribute(ModAttributes.MANA_RECHARGE.get())).setBaseValue(0.33D);
                 }
             });
         });

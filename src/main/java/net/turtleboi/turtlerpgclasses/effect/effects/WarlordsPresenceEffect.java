@@ -42,10 +42,10 @@ public class WarlordsPresenceEffect extends MobEffect {
         if (player.hasEffect(ModEffects.WARLORDS_PRESENCE.get())) {
             MobEffectInstance effectInstance = player.getEffect(ModEffects.WARLORDS_PRESENCE.get());
             if (effectInstance != null) {
-                effectInstance.update(new MobEffectInstance(ModEffects.WARLORDS_PRESENCE.get(), duration, effectInstance.getAmplifier()));
+                effectInstance.update(new MobEffectInstance(ModEffects.WARLORDS_PRESENCE.get(), duration, effectInstance.getAmplifier(), true, true, true));
             }
         } else {
-            player.addEffect(new MobEffectInstance(ModEffects.WARLORDS_PRESENCE.get(), duration, 0));
+            player.addEffect(new MobEffectInstance(ModEffects.WARLORDS_PRESENCE.get(), duration, 0, true, true, true));
         }
     }
 }

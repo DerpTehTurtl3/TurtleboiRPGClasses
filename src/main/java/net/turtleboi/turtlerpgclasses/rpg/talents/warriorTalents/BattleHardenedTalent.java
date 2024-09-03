@@ -17,16 +17,18 @@ public class BattleHardenedTalent extends Talent {
         return Name;
     }
 
-    public int getArmorIncrease(int points) {
+    public double getArmor(int points) {
         return points;
     }
 
     @Override
     public void applyAttributes(Player player) {
+        int talentsPoints = getPoints(player);
+
         applyModifier(player,
                 Attributes.ARMOR,
                 getAttributeName("Armor"),
-                getArmorIncrease(getPoints(player)),
+                getArmor(talentsPoints),
                 AttributeModifier.Operation.ADDITION);
     }
 

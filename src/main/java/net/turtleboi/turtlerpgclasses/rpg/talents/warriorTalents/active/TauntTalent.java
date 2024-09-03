@@ -3,6 +3,7 @@ package net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
@@ -73,7 +74,14 @@ public class TauntTalent extends ActiveAbility {
         player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
             playerAbility.setTargetEntity(null);
             playerAbility.setTaunting(false);
-            LivingEntity target = TargetingUtils.getTarget(player);
+
+            LivingEntity target;
+            if (TargetingUtils.isLockedOn(player)){
+                target = TargetingUtils.getLockedTarget(player);
+            } else {
+                target = TargetingUtils.getTarget(player);
+            }
+
             if (target instanceof Mob mobTarget) {
                 MobCategory category = target.getType().getCategory();
                 if (!isAllowedCategory(category) && !playerAbility.isTaunting()) {

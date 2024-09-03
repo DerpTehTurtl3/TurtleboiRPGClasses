@@ -1,11 +1,13 @@
 package net.turtleboi.turtlerpgclasses.event;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
@@ -90,7 +92,25 @@ public class ClientEvents {
 
         @SubscribeEvent
         public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
+            Player player = event.getEntity();
+            PoseStack poseStack = event.getPoseStack();
+            float baseFollowRange = (float) player.getAttributeBaseValue(Attributes.FOLLOW_RANGE);
+            float currentFollowRange = (float) player.getAttributeValue(Attributes.FOLLOW_RANGE);
 
+            // Calculate transparency based on follow range
+            float alpha = 1.0F; // Fully opaque
+            if (baseFollowRange > 0) {
+                float followRangePercentage = currentFollowRange / baseFollowRange;
+                alpha = Math.max(0.2F, Math.min(1.0F, 0.5F + followRangePercentage * 0.5F));
+            }
+
+            // Apply transparency
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+
+            // Render the player with the modified alpha
+            poseStack.pushPose();
         }
 
         @SubscribeEvent
@@ -105,6 +125,11 @@ public class ClientEvents {
             } else if (new GuardiansOathTalent().isActive(player)){
                 AuraRenderer.renderAura(player, poseStack, event.getPartialTick(), 1);
             }
+
+            RenderSystem.disableBlend();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+            poseStack.popPose();
             bufferSource.endBatch();
         }
 

@@ -27,7 +27,7 @@ public class PathOfThePaladinSubclass extends Talent {
     }
 
     public static double getManaRechargeValue() {
-        return 0.08;
+        return -0.08;
     }
 
     @Override

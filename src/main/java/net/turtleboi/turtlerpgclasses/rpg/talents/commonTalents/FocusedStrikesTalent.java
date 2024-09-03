@@ -21,53 +21,32 @@ public class FocusedStrikesTalent extends Talent {
         return Name;
     }
 
-    public static int getDamageIncrease(int points) {
-        int[] damageValues = {1, 1, 1, 2, 2};
+    public double getDamageIncrease(int points) {
+        int[] damageValues = {1, 1, 2, 2, 3};
         int currentRankIndex = Math.max(0, Math.min(points - 1, damageValues.length - 1));
         return damageValues[currentRankIndex];
     }
 
-    public static int getHitThreshold(int points) {
+    public double getHitThreshold(int points) {
         int[] hitThresholds = {4, 3, 3, 2, 2};
         int currentRankIndex = Math.max(0, Math.min(points - 1, hitThresholds.length - 1));
         return hitThresholds[currentRankIndex];
     }
 
-    public static int getDamageMaximum(int points) {
-        int[] damageMaximumValues = {4, 6, 8, 12, 16};
+    public double getDamageMaximum(int points) {
+        int[] damageMaximumValues = {4, 6, 8, 12, 15};
         int currentRankIndex = Math.max(0, Math.min(points - 1, damageMaximumValues.length - 1));
         return damageMaximumValues[currentRankIndex];
     }
 
-    public void applyValues(Player player) {
-        int talentPoints = getPoints(player);
-
-        int damageIncrease = getDamageIncrease(talentPoints);
-        int hitThreshold = getHitThreshold(talentPoints);
-        int damageMaximum = getDamageMaximum(talentPoints);
-
-        player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
-            playerAbility.setFocusedStrikesThreshold(hitThreshold);
-            playerAbility.setFocusedStrikesDamage(damageIncrease);
-            playerAbility.setFocusedStrikesMaxDamage(damageMaximum);
-        });
-    }
-
-    private static int getDamageBonus(Player player) {
-        AtomicInteger damageBonus = new AtomicInteger(0);
-        player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
-            damageBonus.set(playerAbility.getCurrentBonusDamage());
-        });
-        return damageBonus.get();
+    public int getMaxUpgrades(Player player) {
+        int talentsPoints = getPoints(player);
+        return (int) (getDamageMaximum(talentsPoints)/getDamageIncrease(talentsPoints));
     }
 
     @Override
     public void applyAttributes(Player player) {
-        applyModifier(player,
-                Attributes.ATTACK_DAMAGE,
-                getAttributeName("Attack"),
-                getDamageBonus(player),
-                AttributeModifier.Operation.ADDITION);
+
     }
 
     @Override
@@ -78,13 +57,15 @@ public class FocusedStrikesTalent extends Talent {
     @Override
     public List<Attribute> getRPGAttributes() {
         return List.of(
-                Attributes.ATTACK_DAMAGE
+
         );
     }
 
     @Override
     public List<Attribute> getRPGEffectAttributes() {
-        return List.of();
+        return List.of(
+                Attributes.ATTACK_DAMAGE
+        );
     }
 
     private static final float basePitch = 1.0f;

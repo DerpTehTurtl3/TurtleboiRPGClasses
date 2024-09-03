@@ -2,7 +2,9 @@ package net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlerpgclasses.rpg.talents.Talent;
 
 import java.util.List;
@@ -15,20 +17,13 @@ public class SteadyBreathingTalent extends Talent {
         return Name;
     }
 
-    public static double getHealthValue(int points) {
-        return points * 2;
+    public double getDamage(int points) {
+        return points;
     }
 
     @Override
     public void applyAttributes(Player player) {
-        //int talentPoints = getPoints(player);
-        //double healthValue = getHealthValue(talentPoints);
-//
-        //applyModifier(player,
-        //        Attributes.MAX_HEALTH,
-        //        getAttributeName("Health"),
-        //        healthValue,
-        //        AttributeModifier.Operation.ADDITION);
+
     }
 
     @Override
@@ -45,6 +40,9 @@ public class SteadyBreathingTalent extends Talent {
 
     @Override
     public List<Attribute> getRPGEffectAttributes() {
-        return List.of();
+        return List.of(
+                Attributes.ATTACK_DAMAGE,
+                CoreAttributes.RANGED_DAMAGE.get()
+        );
     }
 }

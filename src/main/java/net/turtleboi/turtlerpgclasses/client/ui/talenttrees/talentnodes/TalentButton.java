@@ -371,6 +371,28 @@ public abstract class TalentButton extends Button {
                 : Component.literal(" +" + ranks + " ")
                 .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FF00")));
     }
+
+    protected MutableComponent buildRankedStringComponent(int currentPoints, int maxPoints, boolean isShiftPressed,
+                                                          Function<Integer, String> valueGetter, String hexcode) {
+        String value = valueGetter.apply(currentPoints);
+        String nextValue = isShiftPressed && currentPoints < maxPoints ? valueGetter.apply(currentPoints + 1) : value;
+
+        StringBuilder ranks = new StringBuilder();
+        for (int i = 1; i <= maxPoints; i++) {
+            if (i > 1) {
+                ranks.append("/");
+            }
+            ranks.append(valueGetter.apply(i));
+        }
+
+        return currentPoints != 0
+                ? Component.literal(" " + nextValue + " ")
+                .withStyle(isShiftPressed && currentPoints < maxPoints
+                        ? Style.EMPTY.withColor(TextColor.parseColor("#00FF00"))
+                        : Style.EMPTY.withColor(TextColor.parseColor(hexcode)))
+                : Component.literal(" " + ranks + " ")
+                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FF00")));
+    }
 }
 
 

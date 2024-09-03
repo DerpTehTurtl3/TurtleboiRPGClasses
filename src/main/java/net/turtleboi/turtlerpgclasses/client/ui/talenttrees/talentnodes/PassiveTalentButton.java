@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class PassiveTalentButton extends TalentButton {
     private static final ResourceLocation TALENT_TREE_TEXTURES = new ResourceLocation(TurtleRPGClasses.MOD_ID, "textures/gui/talents/talent_widgets.png");
-    private final Talent talentClass;
+    protected Talent talentClass;
 
     public PassiveTalentButton(TalentTree talentTree, Talent talentClass, int x, int y, int maxPoints, int requiredPoints, boolean alwaysActive, OnPress onPress) {
         super(talentTree, talentClass.getTalentName(), x, y, 26, 26, maxPoints,  requiredPoints, Component.empty(), alwaysActive, onPress);

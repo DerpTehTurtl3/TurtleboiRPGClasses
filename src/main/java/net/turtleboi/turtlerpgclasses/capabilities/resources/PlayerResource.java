@@ -8,6 +8,8 @@ import net.turtleboi.turtlerpgclasses.init.ModAttributes;
 
 import java.awt.*;
 import java.awt.desktop.SystemEventListener;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @AutoRegisterCapability
 public class PlayerResource {
@@ -132,13 +134,16 @@ public class PlayerResource {
     }
 
     public void updateRechargeRates(double deltaTime) {
+        LocalTime currentTime = LocalTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
         if (staminaActive) {
             double staminaRegenRate = getStaminaRecharge();
             staminaBuffer += getStaminaRecharge() * deltaTime;
             while (staminaBuffer >= 1.0) {
                 addStamina(1);
-                System.out.println("Adding stamina! Current regeneration is " + staminaRegenRate + " stamina per second");
-                staminaBuffer -= 1.0;
+                //System.out.println("[" + currentTime.format(formatter) + "] Adding stamina! Current regeneration is " + staminaRegenRate + " stamina per second");
+                staminaBuffer = 0.0;
             }
             this.stamina = Math.min(this.stamina, getMaxStamina());
         }
@@ -147,8 +152,8 @@ public class PlayerResource {
             energyBuffer += getEnergyRecharge() * deltaTime;
             while (energyBuffer >= 1.0) {
                 addEnergy(1);
-                System.out.println("Adding energy! Current regeneration is " + energyRechargeRate + " energy per second");
-                energyBuffer -= 1.0;
+                //System.out.println("[" + currentTime.format(formatter) + "] Adding energy! Current regeneration is " + energyRechargeRate + " energy per second");
+                energyBuffer = 0.0;
             }
             this.energy = Math.min(this.energy, getMaxEnergy());
         }
@@ -157,8 +162,8 @@ public class PlayerResource {
             manaBuffer += getManaRecharge() * deltaTime;
             while (manaBuffer >= 1.0) {
                 addMana(1);
-                System.out.println("Adding mana! Current regeneration is " + manaRechargeRate + " mana per second");
-                manaBuffer -= 1.0;
+                //System.out.println("[" + currentTime.format(formatter) + "] Adding mana! Current regeneration is " + manaRechargeRate + " mana per second");
+                manaBuffer = 0.0;
             }
             this.mana = Math.min(this.mana, getMaxMana());
         }

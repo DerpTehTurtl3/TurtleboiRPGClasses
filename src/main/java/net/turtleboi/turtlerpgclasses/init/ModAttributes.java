@@ -29,7 +29,7 @@ public class ModAttributes {
             create("stamina_recharge", 0.1D, 0D);
 
     public static final RegistryObject<Attribute> ENERGY_RECHARGE =
-            create("energy_recharge", 2.0D, 0D);
+            create("energy_recharge", 4.0D, 0D);
 
     public static final RegistryObject<Attribute> MANA_RECHARGE =
             create("mana_recharge", 0.33D, 0D);

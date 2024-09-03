@@ -18,25 +18,25 @@ public class CombatVeteranTalent extends Talent {
         return Name;
     }
 
-    public static double getMeleeDamageValue(int points) {
-        double[] meleeDamageValues = {1.0, 2.0, 3.0, 4.0, 5.0};
-        int currentRankIndex = Math.max(0, Math.min(points - 1, meleeDamageValues.length - 1));
-        return meleeDamageValues[currentRankIndex];
+    public double getAttackDamage(int points) {
+        double[] attackDamageValues = {1.0, 2.0, 3.0, 4.0, 5.0};
+        int currentRankIndex = Math.max(0, Math.min(points - 1, attackDamageValues.length - 1));
+        return attackDamageValues[currentRankIndex];
     }
 
-    public static double getAttackSpeedValue(int points) {
-        double[] attackSpeedValues = {0.06, 0.12, 0.18, 0.24, 0.30};
+    public double getAttackSpeed(int points) {
+        double[] attackSpeedValues = {6.0, 12.0, 18.0, 24.0, 30.0};
         int currentRankIndex = Math.max(0, Math.min(points - 1, attackSpeedValues.length - 1));
         return attackSpeedValues[currentRankIndex];
     }
 
-    public static double getHealthValue(int points) {
+    public double getHealth(int points) {
         double[] healthValues = {4.0, 8.0, 12.0, 16.0, 20.0};
         int currentRankIndex = Math.max(0, Math.min(points - 1, healthValues.length - 1));
         return healthValues[currentRankIndex];
     }
 
-    public static double getArmorValue(int points) {
+    public double getArmor(int points) {
         double[] armorValues = {2.0, 3.0, 4.0, 5.0, 6.0};
         int currentRankIndex = Math.max(0, Math.min(points - 1, armorValues.length - 1));
         return armorValues[currentRankIndex];
@@ -46,30 +46,25 @@ public class CombatVeteranTalent extends Talent {
     public void applyAttributes(Player player) {
         int talentPoints = getPoints(player);
 
-        double meleeDamageValue = getMeleeDamageValue(talentPoints);
-        double attackSpeedValue = getAttackSpeedValue(talentPoints);
-        double healthValue = getHealthValue(talentPoints);
-        double armorValue = getArmorValue(talentPoints);
-
         applyModifier(player,
                 Attributes.ATTACK_DAMAGE,
                 getAttributeName("Attack"),
-                meleeDamageValue,
+                getAttackDamage(talentPoints),
                 AttributeModifier.Operation.ADDITION);
         applyModifier(player,
                 Attributes.ATTACK_SPEED,
                 getAttributeName("AttackSpeed"),
-                attackSpeedValue,
+                getAttackSpeed(talentPoints)/100,
                 AttributeModifier.Operation.MULTIPLY_TOTAL);
         applyModifier(player,
                 Attributes.MAX_HEALTH,
                 getAttributeName("Health"),
-                healthValue,
+                getHealth(talentPoints),
                 AttributeModifier.Operation.ADDITION);
         applyModifier(player,
                 Attributes.ARMOR,
                 getAttributeName("Armor"),
-                armorValue,
+                getArmor(talentPoints),
                 AttributeModifier.Operation.ADDITION);
     }
 

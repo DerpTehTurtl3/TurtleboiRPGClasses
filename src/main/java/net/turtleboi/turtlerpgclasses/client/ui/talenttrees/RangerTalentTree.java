@@ -155,7 +155,7 @@ public class RangerTalentTree extends TalentTree {
                 new EvasiveManeuversTalent(),
                 centerX - buttonSize,
                 startY + (verticalSpacing * 4),
-                5,
+                4,
                 12,
                 false,
                 button -> {});
@@ -164,7 +164,7 @@ public class RangerTalentTree extends TalentTree {
                 new VineWhipTalent(),
                 centerX + buttonSize,
                 startY + (verticalSpacing * 4),
-                5,
+                4,
                 12,
                 false,
                 button -> {});

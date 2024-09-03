@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "turtlerpgclasses:diamond_handaxe"
+  },
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "result": {
+    "item": "turtlerpgclasses:netherite_handaxe",
+    "count": 1
+  }
+}

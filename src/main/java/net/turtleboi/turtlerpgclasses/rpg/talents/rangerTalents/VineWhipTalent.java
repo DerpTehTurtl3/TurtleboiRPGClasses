@@ -15,20 +15,27 @@ public class VineWhipTalent extends Talent {
         return Name;
     }
 
-    public static double getHealthValue(int points) {
-        return points * 2;
+    public double getRootDuration(int points) {
+        double[] rootDurationValues = {2.0, 3.0, 5.0, 7.0};
+        int currentRankIndex = Math.max(0, Math.min(points - 1, rootDurationValues.length - 1));
+        return rootDurationValues[currentRankIndex];
+    }
+
+    public int getSwiftnessAmplifier(int points) {
+        int[] swiftnessAmplifierValues = {0, 0, 1, 1};
+        int currentRankIndex = Math.max(0, Math.min(points - 1, swiftnessAmplifierValues.length - 1));
+        return swiftnessAmplifierValues[currentRankIndex];
+    }
+
+    public String getSwiftnessComponent(int points) {
+        String[] swiftComponents = {"Swiftness", "Swiftness", "Swiftness II", "Swiftness II"};
+        int currentRankIndex = Math.max(0, Math.min(points - 1, swiftComponents.length - 1));
+        return swiftComponents[currentRankIndex];
     }
 
     @Override
     public void applyAttributes(Player player) {
-        //int talentPoints = getPoints(player);
-        //double healthValue = getHealthValue(talentPoints);
-//
-        //applyModifier(player,
-        //        Attributes.MAX_HEALTH,
-        //        getAttributeName("Health"),
-        //        healthValue,
-        //        AttributeModifier.Operation.ADDITION);
+
     }
 
     @Override

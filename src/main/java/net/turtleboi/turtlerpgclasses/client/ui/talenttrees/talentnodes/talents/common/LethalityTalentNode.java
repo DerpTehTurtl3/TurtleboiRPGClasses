@@ -45,7 +45,7 @@ public class LethalityTalentNode extends StatTalentButton {
             tooltip.add(Component.translatable("talents.player_gains")
                     .append(armorPenComponent)
                     .append(Component.translatable("talents.armor_penetration"))
-                    .append(Component.translatable("talents.lethality_description"))
+                    .append(Component.translatable("talents.lethality.description"))
             );
 
             if (currentPoints == 0) {

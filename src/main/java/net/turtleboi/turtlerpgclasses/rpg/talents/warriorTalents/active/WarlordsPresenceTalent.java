@@ -74,9 +74,9 @@ public class WarlordsPresenceTalent extends ActiveAbility {
         level.getEntitiesOfClass(Player.class, aabb).forEach(ally -> {
             if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player) {
                 if (!ally.hasEffect(ModEffects.WARLORDS_PRESENCE.get())) {
-                    ally.addEffect(new MobEffectInstance(ModEffects.WARLORDS_PRESENCE.get(), 20*3, 0));
+                    ally.addEffect(new MobEffectInstance(ModEffects.WARLORDS_PRESENCE.get(), 60, 0, true, true, true));
                 } else {
-                    WarlordsPresenceEffect.updateEffectDuration(player, 20*3);
+                    WarlordsPresenceEffect.updateEffectDuration(player, 60);
                 }
             }
         });

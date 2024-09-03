@@ -11,11 +11,7 @@ import java.util.UUID;
 
 @AutoRegisterCapability
 public class PlayerAbility {
-    private int brawlerArmorBonus;
-    private int brawlerArmorTimer;
     private int brawlerHitCounter;
-    private int maxBrawlerArmorBonus;
-    private boolean brawlersTenacityTriggered = false;
 
     private LivingEntity targetEntity;
     private boolean isCharging = false;
@@ -32,11 +28,7 @@ public class PlayerAbility {
     private boolean isTaunting = false;
 
     private int focusedStrikesCounter;
-    private double focusedStrikesTimer;
-    private int focusedStrikesThreshold = 0;
-    private int focusedStrikesDamage = 0;
-    private int focusedStrikesMaxDamage = 0;
-    public int currentBonusDamage;
+    private int focusedStrikesTier;
 
     private int windedEffectDuration = 0;
     private int secondWindSpeedDuration = 0;
@@ -46,6 +38,11 @@ public class PlayerAbility {
     private int exhaustedDuration = 0;
 
     private double lifeLeechPercentage;
+
+    private int steadyBreathingStacks = 0;
+    private int steadyBreathingIdleTicks = 0;
+
+    private Map<UUID, Long> lastRootedTimes = new HashMap<>();
 
     private Map<String, UUID> talentUUIDs = new HashMap<>();
 
@@ -76,14 +73,6 @@ public class PlayerAbility {
     }
 
     //Brawler's Tenacity Talent
-    public int getBrawlerArmorBonus() {
-        return brawlerArmorBonus;
-    }
-
-    public void setBrawlerArmorBonus(int brawlerArmorBonus) {
-        this.brawlerArmorBonus = brawlerArmorBonus;
-    }
-
     public void setBrawlerHitCounter(int brawlerHitCounter) {
         this.brawlerHitCounter = brawlerHitCounter;
     }
@@ -94,14 +83,6 @@ public class PlayerAbility {
 
     public void incrementBrawlerHitCounter() {
         this.brawlerHitCounter++;
-    }
-
-    public int getMaxBrawlerArmorBonus() {
-        return maxBrawlerArmorBonus;
-    }
-
-    public void setMaxBrawlerArmorBonus(int maxBrawlerArmorBonus) {
-        this.maxBrawlerArmorBonus = maxBrawlerArmorBonus;
     }
 
     //Charge Ability
@@ -206,11 +187,6 @@ public class PlayerAbility {
         this.focusedStrikesCounter++;
     }
 
-    public void resetFocusedStrikes() {
-        this.focusedStrikesCounter = 0;
-        this.currentBonusDamage = 0;
-    }
-
     public void setFocusedStrikesCounter(int counter) {
         this.focusedStrikesCounter = counter;
     }
@@ -219,36 +195,16 @@ public class PlayerAbility {
         return focusedStrikesCounter;
     }
 
-    public int getFocusedStrikesThreshold() {
-        return focusedStrikesThreshold;
+    public void incrementFocusedStrikesTier() {
+        this.focusedStrikesTier++;
     }
 
-    public void setFocusedStrikesThreshold(int threshold) {
-        this.focusedStrikesThreshold = threshold;
+    public void setFocusedStrikesTier(int counter) {
+        this.focusedStrikesTier = counter;
     }
 
-    public int getFocusedStrikesDamage() {
-        return focusedStrikesDamage;
-    }
-
-    public void setFocusedStrikesDamage(int damage) {
-        this.focusedStrikesDamage = damage;
-    }
-
-    public int getFocusedStrikesMaxDamage() {
-        return focusedStrikesMaxDamage;
-    }
-
-    public void setFocusedStrikesMaxDamage(int maxDamage) {
-        this.focusedStrikesMaxDamage = maxDamage;
-    }
-
-    public int getCurrentBonusDamage() {
-        return currentBonusDamage;
-    }
-
-    public void addBonusDamage(int bonus) {
-        this.currentBonusDamage = Math.min(this.currentBonusDamage + bonus, this.focusedStrikesMaxDamage);
+    public int getFocusedStrikesTier() {
+        return focusedStrikesTier;
     }
 
     //Stampede Talent
@@ -272,19 +228,52 @@ public class PlayerAbility {
         this.stampedeTicks++;
     }
 
+    //Vine Whip Talent
+    public long getLastRootedTime(UUID targetUUID) {
+        return lastRootedTimes.getOrDefault(targetUUID, 0L);
+    }
+
+    public void setLastRootedTime(UUID targetUUID, long time) {
+        lastRootedTimes.put(targetUUID, time);
+    }
+
+    //Steady Breathing Talent
+    public int getSteadyBreathingStacks() {
+        return steadyBreathingStacks;
+    }
+
+    public void setSteadyBreathingStacks(int stacks) {
+        this.steadyBreathingStacks = stacks;
+    }
+
+    public void incrementSteadyBreathingStacks() {
+        if (steadyBreathingStacks < 3) { // Assuming max stacks is 3
+            this.steadyBreathingStacks++;
+        }
+    }
+
+    public int getSteadyBreathingIdleTicks() {
+        return steadyBreathingIdleTicks;
+    }
+
+    public void setSteadyBreathingIdleTicks(int ticks) {
+        this.steadyBreathingIdleTicks = ticks;
+    }
+
+    public void incrementSteadyBreathingIdleTicks() {
+        this.steadyBreathingIdleTicks++;
+    }
+
+    public void resetSteadyBreathing() {
+        this.steadyBreathingStacks = 0;
+        this.steadyBreathingIdleTicks = 0;
+    }
+
     public void copyFrom(PlayerAbility source) {
-        this.brawlerArmorBonus = source.brawlerArmorBonus;
-        this.brawlerArmorTimer = source.brawlerArmorTimer;
         this.brawlerHitCounter = source.brawlerHitCounter;
-        this.maxBrawlerArmorBonus = source.maxBrawlerArmorBonus;
-        this.brawlersTenacityTriggered = source.brawlersTenacityTriggered;
 
         this.focusedStrikesCounter = source.focusedStrikesCounter;
-        this.focusedStrikesTimer = source.focusedStrikesTimer;
-        this.focusedStrikesDamage = source.focusedStrikesDamage;
-        this.focusedStrikesMaxDamage = source.focusedStrikesMaxDamage;
-        this.currentBonusDamage = source.currentBonusDamage;
-        this.focusedStrikesThreshold = source.focusedStrikesThreshold;
+        this.focusedStrikesTier = source.focusedStrikesTier;
 
         this.windedEffectDuration = source.windedEffectDuration;
         this.secondWindSpeedDuration = source.secondWindSpeedDuration;
@@ -295,22 +284,19 @@ public class PlayerAbility {
 
         this.lifeLeechPercentage = source.lifeLeechPercentage;
 
+        this.lastRootedTimes = new HashMap<>(source.lastRootedTimes);
+
+        this.steadyBreathingStacks = source.steadyBreathingStacks;
+        this.steadyBreathingIdleTicks = source.steadyBreathingIdleTicks;
+
         this.talentUUIDs = new HashMap<>(source.talentUUIDs);
     }
 
     public void saveNBTData(CompoundTag nbt) {
-        nbt.putInt("brawlerArmorBonus", brawlerArmorBonus);
-        nbt.putInt("brawlerArmorTimer", brawlerArmorTimer);
         nbt.putInt("brawlerHitCounter", brawlerHitCounter);
-        nbt.putInt("maxBrawlerArmorBonus", maxBrawlerArmorBonus);
-        nbt.putBoolean("brawlersTenacityTriggered", brawlersTenacityTriggered);
 
         nbt.putInt("focusedStrikesCounter", focusedStrikesCounter);
-        nbt.putDouble("focusedStrikesTimer", focusedStrikesTimer);
-        nbt.putInt("focusedStrikesThreshold", focusedStrikesThreshold);
-        nbt.putInt("focusedStrikesDamage", focusedStrikesDamage);
-        nbt.putInt("focusedStrikesMaxDamage", focusedStrikesMaxDamage);
-        nbt.putInt("currentBonusDamage", currentBonusDamage);
+        nbt.putInt("focusedStrikesTier", focusedStrikesTier);
 
         nbt.putInt("windedEffectDuration", windedEffectDuration);
         nbt.putInt("secondWindSpeedDuration", secondWindSpeedDuration);
@@ -321,6 +307,15 @@ public class PlayerAbility {
 
         nbt.putDouble("lifeLeechPercentage", lifeLeechPercentage);
 
+        nbt.putInt("steadyBreathingStacks", steadyBreathingStacks);
+        nbt.putInt("steadyBreathingIdleTicks", steadyBreathingIdleTicks);
+
+        CompoundTag rootTimesTag = new CompoundTag();
+        for (Map.Entry<UUID, Long> entry : lastRootedTimes.entrySet()) {
+            rootTimesTag.putLong(entry.getKey().toString(), entry.getValue());
+        }
+        nbt.put("LastRootedTimes", rootTimesTag);
+
         CompoundTag uuidTag = new CompoundTag();
         for (Map.Entry<String, UUID> entry : talentUUIDs.entrySet()) {
             uuidTag.putUUID(entry.getKey(), entry.getValue());
@@ -329,18 +324,10 @@ public class PlayerAbility {
     }
 
     public void loadNBTData(CompoundTag nbt) {
-        brawlerArmorBonus = nbt.getInt("brawlerArmorBonus");
-        brawlerArmorTimer = nbt.getInt("brawlerArmorTimer");
         brawlerHitCounter = nbt.getInt("brawlerHitCounter");
-        maxBrawlerArmorBonus = nbt.getInt("maxBrawlerArmorBonus");
-        brawlersTenacityTriggered = nbt.getBoolean("brawlersTenacityTriggered");
 
         focusedStrikesCounter = nbt.getInt("focusedStrikesCounter");
-        focusedStrikesTimer = nbt.getDouble("focusedStrikesTimer");
-        focusedStrikesThreshold = nbt.getInt("focusedStrikesThreshold");
-        focusedStrikesDamage = nbt.getInt("focusedStrikesDamage");
-        focusedStrikesMaxDamage = nbt.getInt("focusedStrikesMaxDamage");
-        currentBonusDamage = nbt.getInt("currentBonusDamage");
+        focusedStrikesTier = nbt.getInt("focusedStrikesTier");
 
         windedEffectDuration = nbt.getInt("windedEffectDuration");
         secondWindSpeedDuration = nbt.getInt("secondWindSpeedDuration");
@@ -350,6 +337,14 @@ public class PlayerAbility {
         exhaustedDuration = nbt.getInt("exhaustedDuration");
 
         lifeLeechPercentage = nbt.getDouble("lifeLeechPercentage");
+
+        CompoundTag rootTimesTag = nbt.getCompound("LastRootedTimes");
+        for (String key : rootTimesTag.getAllKeys()) {
+            lastRootedTimes.put(UUID.fromString(key), rootTimesTag.getLong(key));
+        }
+
+        steadyBreathingStacks = nbt.getInt("steadyBreathingStacks");
+        steadyBreathingIdleTicks = nbt.getInt("steadyBreathingIdleTicks");
 
         CompoundTag uuidTag = nbt.getCompound("TalentUUIDs");
         for (String key : uuidTag.getAllKeys()) {

@@ -15,6 +15,7 @@ import net.turtleboi.turtlerpgclasses.rpg.classes.Ranger;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Mage;
 import net.turtleboi.turtlerpgclasses.rpg.talents.commonTalents.*;
 import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.EfficientEnergyTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.EvasiveManeuversTalent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.RenownedHunterTalent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.WeakPointsTalent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.*;
@@ -152,9 +153,9 @@ public class ClassAttributeManager {
 
         BrawlersTenacityTalent brawlersTenacityTalent = new BrawlersTenacityTalent();
         if (brawlersTenacityTalent.getPoints(player) >= 1){
-            brawlersTenacityTalent.applyValues(player);
+            //brawlersTenacityTalent.applyValues(player);
         } else if (brawlersTenacityTalent.getPoints(player) == 0) {
-            brawlersTenacityTalent.removeModifier(player);
+            brawlersTenacityTalent.removeEffectModifier(player, "brawlerstenacity");
         }
 
         CombatVeteranTalent combatVeteranTalent = new CombatVeteranTalent();
@@ -192,6 +193,13 @@ public class ClassAttributeManager {
             lethalityTalent.removeModifier(player);
         }
 
+        EvasiveManeuversTalent evasiveManeuversTalent = new EvasiveManeuversTalent();
+        if (evasiveManeuversTalent.getPoints(player) >= 1) {
+            evasiveManeuversTalent.applyAttributes(player);
+        } else if (evasiveManeuversTalent.getPoints(player) == 0) {
+            evasiveManeuversTalent.removeModifier(player);
+        }
+
         EfficientEnergyTalent efficientEnergyTalent = new EfficientEnergyTalent();
         if (efficientEnergyTalent.getPoints(player) >= 1) {
             efficientEnergyTalent.applyAttributes(player);
@@ -227,7 +235,8 @@ public class ClassAttributeManager {
             CoreAttributes.DAMAGE_RESISTANCE.get(),
             CoreAttributes.LIFE_STEAL.get(),
             CoreAttributes.HEALING_EFFECTIVENESS.get(),
-            CoreAttributes.ARMOR_PENETRATION.get()
+            CoreAttributes.ARMOR_PENETRATION.get(),
+            CoreAttributes.DODGE_CHANCE.get()
     );
 
     public static void resetAttributes(Player player) {

@@ -8,6 +8,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
 import net.turtleboi.turtlerpgclasses.effect.effects.*;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.EvasiveManeuversTalent;
 
 public class ModEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS =
@@ -60,6 +61,15 @@ public class ModEffects {
 
     public static final RegistryObject<MobEffect> STAMINA_RESTORE = MOB_EFFECTS.register("staminarestore",
             () -> new StaminaRestoreEffect(MobEffectCategory.BENEFICIAL, 6882560));
+
+    public static final RegistryObject<MobEffect> STEALTHED = MOB_EFFECTS.register("stealthed",
+            () -> new StealthedEffect(MobEffectCategory.BENEFICIAL, 6918259));
+
+    public static final RegistryObject<MobEffect> EVASIVE_MANEUVERS = MOB_EFFECTS.register("evasivemaneuvers",
+            () -> new EvasiveManeuversEffect(MobEffectCategory.BENEFICIAL, 11353590));
+
+    public static final RegistryObject<MobEffect> STEADY_BREATHING = MOB_EFFECTS.register("steadybreathing",
+            () -> new SteadyBreathingEffect(MobEffectCategory.BENEFICIAL, 11353590));
 
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);

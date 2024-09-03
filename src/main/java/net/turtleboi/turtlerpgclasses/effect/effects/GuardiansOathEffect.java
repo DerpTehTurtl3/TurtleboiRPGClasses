@@ -60,10 +60,10 @@ public class GuardiansOathEffect extends MobEffect {
         if (player.hasEffect(ModEffects.GUARDIANS_OATH.get())) {
             MobEffectInstance effectInstance = player.getEffect(ModEffects.GUARDIANS_OATH.get());
             if (effectInstance != null) {
-                effectInstance.update(new MobEffectInstance(ModEffects.GUARDIANS_OATH.get(), duration, effectInstance.getAmplifier()));
+                effectInstance.update(new MobEffectInstance(ModEffects.GUARDIANS_OATH.get(), duration, effectInstance.getAmplifier(), true, true, true));
             }
         } else {
-            player.addEffect(new MobEffectInstance(ModEffects.GUARDIANS_OATH.get(), duration, 0));
+            player.addEffect(new MobEffectInstance(ModEffects.GUARDIANS_OATH.get(), duration, 0, true, true, true));
         }
     }
 }

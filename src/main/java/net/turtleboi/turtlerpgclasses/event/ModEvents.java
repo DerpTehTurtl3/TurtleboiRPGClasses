@@ -5,19 +5,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -32,15 +34,16 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.ArrowLooseEvent;
-import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.turtleboi.turtlecore.capabilities.targeting.PlayerTargetingProvider;
 import net.turtleboi.turtlecore.effect.CoreEffects;
+import net.turtleboi.turtlecore.init.CoreAttributes;
 import net.turtleboi.turtlecore.util.PartyUtils;
 import net.turtleboi.turtlecore.util.TargetingUtils;
 import net.turtleboi.turtlerpgclasses.TurtleRPGClasses;
@@ -49,7 +52,6 @@ import net.turtleboi.turtlerpgclasses.capabilities.PlayerClassProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStates;
 import net.turtleboi.turtlerpgclasses.capabilities.talents.TalentStatesProvider;
 import net.turtleboi.turtlerpgclasses.capabilities.resources.PlayerResourceProvider;
-import net.turtleboi.turtlerpgclasses.client.ClientClassData;
 import net.turtleboi.turtlerpgclasses.client.ui.cooldowns.CooldownOverlay;
 import net.turtleboi.turtlerpgclasses.client.ui.resources.ResourceOverlay;
 import net.turtleboi.turtlerpgclasses.effect.effects.*;
@@ -64,14 +66,19 @@ import net.turtleboi.turtlerpgclasses.rpg.classes.Ranger;
 import net.turtleboi.turtlerpgclasses.rpg.classes.Warrior;
 import net.turtleboi.turtlerpgclasses.rpg.talents.ActiveAbility;
 import net.turtleboi.turtlerpgclasses.rpg.talents.commonTalents.FocusedStrikesTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.EvasiveManeuversTalent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.QuickDrawTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.SteadyBreathingTalent;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.VineWhipTalent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.BrawlersTenacityTalent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.PathOfThePaladinSubclass;
 import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.SecondWindTalent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.warriorTalents.active.*;
+import net.turtleboi.turtlerpgclasses.util.EffectUtils;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = TurtleRPGClasses.MOD_ID)
 public class ModEvents {
@@ -241,35 +248,22 @@ public class ModEvents {
             BrawlersTenacityTalent brawlersTenacityTalent = new  BrawlersTenacityTalent();
             if (brawlersTenacityTalent.isActive(player)) {
                 player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
-                    int armorIncrease = playerAbility.getBrawlerArmorBonus();
-                    int maxArmor = playerAbility.getMaxBrawlerArmorBonus();
                     int hitCounter = playerAbility.getBrawlerHitCounter();
-                    int currentArmorBonus = hitCounter * armorIncrease;
-
-                    brawlersTenacityTalent.applyValues(player);
 
                     if (!player.hasEffect(ModEffects.BRAWLERS_TENACITY.get())) {
                         player.addEffect(new MobEffectInstance(ModEffects.BRAWLERS_TENACITY.get(), 120, 0));
                         playerAbility.setBrawlerHitCounter(1);
-                        playerAbility.setBrawlerArmorBonus(armorIncrease);
-                        new BrawlersTenacityTalent().applyAttributes(player);
-                        new BrawlersTenacityTalent().playHitSound(player, armorIncrease);
                     } else if (player.hasEffect(ModEffects.BRAWLERS_TENACITY.get())) {
                         // Increment armor bonus on subsequent hits
-                        if (currentArmorBonus < maxArmor) {
+                        if (hitCounter < brawlersTenacityTalent.getMaxHits(player)) {
                             playerAbility.incrementBrawlerHitCounter();
-                            currentArmorBonus = playerAbility.getBrawlerHitCounter() * armorIncrease;
-                            playerAbility.setBrawlerArmorBonus(currentArmorBonus);
-                            BrawlersTenacityEffect.updateEffectDuration(player, 120);
-                            brawlersTenacityTalent.applyAttributes(player);
-                            brawlersTenacityTalent.playHitSound(player, currentArmorBonus);
-                            //player.sendSystemMessage(Component.literal("Armor gained: " + armorIncrease + " Total Armor: " + currentArmorBonus)); //Debug code
-                        } else {
+                            player.addEffect(new MobEffectInstance(ModEffects.BRAWLERS_TENACITY.get(), 120, hitCounter));
+                        } else if (hitCounter >= brawlersTenacityTalent.getMaxHits(player)){
                             // Max armor reached
                             BrawlersTenacityEffect.updateEffectDuration(player, 120);
-                            //player.sendSystemMessage(Component.literal("Max Armor!" + " Total Armor: " + currentArmorBonus)); //Debug code
                         }
                     }
+                    brawlersTenacityTalent.playEffectSound(player, hitCounter);
                 });
             }
 
@@ -311,10 +305,57 @@ public class ModEvents {
             if (player.hasEffect(ModEffects.RALLY.get())) {
                 event.setCanceled(true);
             }
+
+            EvasiveManeuversTalent evasiveManeuversTalent = new EvasiveManeuversTalent();
+            if (evasiveManeuversTalent.isActive(player)) {
+                player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
+                    if (!player.hasEffect(ModEffects.EVASIVE_MANEUVERS.get())) {
+                        player.addEffect(new MobEffectInstance(ModEffects.EVASIVE_MANEUVERS.get(), 100, 0));
+                        AttributeInstance dodgeChanceAttribute = player.getAttribute(CoreAttributes.DODGE_CHANCE.get());
+                        if (dodgeChanceAttribute != null) {
+                            double dodgeChance = dodgeChanceAttribute.getValue();
+                            //player.sendSystemMessage(Component.literal("Dodge chance increased! Current dodge chance: " + dodgeChance + "%")); // debug code
+                        } else {
+                            //player.sendSystemMessage(Component.literal("Dodge chance attribute not found!")); // debug code
+                        }
+                    } else if (player.hasEffect(ModEffects.EVASIVE_MANEUVERS.get())) {
+                        EvasiveManeuversEffect.updateEffectDuration(player, 100);
+                    }
+                });
+            }
+
+            SteadyBreathingTalent steadyBreathingTalent = new SteadyBreathingTalent();
+            if (steadyBreathingTalent.isActive(player)) {
+                player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
+                    playerAbility.resetSteadyBreathing();
+                    if (player.hasEffect(ModEffects.STEADY_BREATHING.get())) {
+                        player.removeEffect(ModEffects.STEADY_BREATHING.get());
+                    }
+                });
+            }
         }
 
         if (sourceEntity instanceof Player player) {
-             //Logic for if player hurts something, but that also handled by onPlayerAttack
+             //Logic for if player hurts something, but that's also handled by onPlayerAttack
+            player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
+                SteadyBreathingTalent steadyBreathingTalent = new SteadyBreathingTalent();
+                if (steadyBreathingTalent.isActive(player)) {
+                    if (!player.hasEffect(ModEffects.STEADY_BREATHING.get()) && playerAbility.getSteadyBreathingStacks() < 1) {
+                        playerAbility.resetSteadyBreathing();
+                        if (player.hasEffect(ModEffects.STEADY_BREATHING.get())) {
+                            player.removeEffect(ModEffects.STEADY_BREATHING.get());
+                        }
+                    } else if (player.hasEffect(ModEffects.STEADY_BREATHING.get())){
+                        int talentPoints = steadyBreathingTalent.getPoints(player);
+                        int damageStacks = playerAbility.getSteadyBreathingStacks();
+                        double damageBonus = steadyBreathingTalent.getDamage(talentPoints) * damageStacks;
+                        event.setAmount((float) (event.getAmount() + damageBonus));
+                        player.sendSystemMessage(Component.literal("Consumed Steady Breathing stacks! Damage bonus: " + damageBonus)); //debug code
+                        player.removeEffect(ModEffects.STEADY_BREATHING.get());
+                        playerAbility.resetSteadyBreathing();
+                    }
+                }
+            });
         }
     }
 
@@ -330,43 +371,46 @@ public class ModEvents {
         //Focused Strikes Talent Logic
         FocusedStrikesTalent focusedStrikesTalent = new FocusedStrikesTalent();
         if (focusedStrikesTalent.isActive(player)) {
-            double ComboTime = (player.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED) * 20);
+            int comboTime = (int) ((player.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED) * 20));
 
             player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
-                int threshold = playerAbility.getFocusedStrikesThreshold();
-                int counter = playerAbility.getFocusedStrikesCounter();
-                int currentBonusDamage = playerAbility.getCurrentBonusDamage();
-                int currentBonusMax = playerAbility.getFocusedStrikesMaxDamage();
-                int hitsLeft = threshold - counter;
-
-                focusedStrikesTalent.applyValues(player);
+                int talentPoints = focusedStrikesTalent.getPoints(player);
+                int hitCounter = playerAbility.getFocusedStrikesCounter();
+                int tierCounter = playerAbility.getFocusedStrikesTier();
+                int maxUpgrades = focusedStrikesTalent.getMaxUpgrades(player);
+                int upgradeThreshold = (int) focusedStrikesTalent.getHitThreshold(talentPoints);
+                int hitsLeft = upgradeThreshold - hitCounter;
+                float attackStrength = player.getAttackStrengthScale(0.0F);
+                int buffer = 20;
 
                 if (!player.hasEffect(ModEffects.FOCUSED_STRIKES.get())) {
-                    playerAbility.resetFocusedStrikes();
-                    playerAbility.incrementFocusedStrikesCounter();
-                    new FocusedStrikesTalent().playHitSound(player, currentBonusDamage);
-                    player.addEffect(new MobEffectInstance(ModEffects.FOCUSED_STRIKES.get(), (int) ComboTime + 40, 0));
-                    //player.sendSystemMessage(Component.literal(hitsLeft + " hits left until next damage bonus")); //Debug code
+                    playerAbility.setFocusedStrikesCounter(1);
+                    playerAbility.setFocusedStrikesTier(1);
+                    player.addEffect(new MobEffectInstance(ModEffects.FOCUSED_STRIKES.get(), comboTime + buffer, 0));
+                    //player.sendSystemMessage(Component.literal("Combo started! " + hitsLeft + " hits left until next damage bonus")); //Debug code
                 } else if (player.hasEffect(ModEffects.FOCUSED_STRIKES.get())) {
-                    MobEffectInstance effectInstance = player.getEffect(ModEffects.FOCUSED_STRIKES.get());
-                    assert effectInstance != null;
-                    double timer = effectInstance.getDuration();
-                    if (counter >= threshold && timer >= ComboTime) {
-                        playerAbility.setFocusedStrikesCounter(0);
-                        if (currentBonusDamage < currentBonusMax) {
-                            playerAbility.addBonusDamage(playerAbility.getFocusedStrikesDamage());
-                            focusedStrikesTalent.applyAttributes(player);
-                            focusedStrikesTalent.playUpgradeSound(player, currentBonusDamage);
+                    if (tierCounter < maxUpgrades) {
+                        if (attackStrength >= 1.0F) {
+                            if (hitCounter < upgradeThreshold) {
+                                playerAbility.incrementFocusedStrikesCounter();
+                                //player.sendSystemMessage(Component.literal("Combo scored! " + hitsLeft + " hits left until next damage bonus")); //Debug code
+                            } else {
+                                playerAbility.incrementFocusedStrikesTier();
+                                focusedStrikesTalent.playUpgradeSound(player, tierCounter);
+                                playerAbility.setFocusedStrikesCounter(1);
+                                player.addEffect(new MobEffectInstance(ModEffects.FOCUSED_STRIKES.get(), comboTime + buffer, tierCounter));
+                                //player.sendSystemMessage(Component.literal("Damage upgrade! Attack bonus: " + (tierCounter * focusedStrikesTalent.getDamageIncrease(talentPoints)))); //Debug code
+                            }
+                        } else {
+                            playerAbility.setFocusedStrikesCounter(1);
+                            FocusedStrikesEffect.updateEffectDuration(player, comboTime + buffer);
+                            //player.sendSystemMessage(Component.literal("Too soon... " + hitsLeft + " hits left until next damage bonus")); //Debug code
                         }
-                    } else if (timer >= ComboTime && currentBonusDamage < currentBonusMax) {
-                        playerAbility.incrementFocusedStrikesCounter();
-                        //player.sendSystemMessage(Component.literal(hitsLeft + " hits left until next damage bonus")); //Debug code
-                        focusedStrikesTalent.playHitSound(player, currentBonusDamage);
-                    } else if (currentBonusDamage >= currentBonusMax) {
-                        focusedStrikesTalent.playHitSound(player, currentBonusDamage);
-                        //player.sendSystemMessage(Component.literal("Max damage!")); //Debug code
+                    } else {
+                        // Max attack reached
+                        FocusedStrikesEffect.updateEffectDuration(player, comboTime + buffer);
+                        //player.sendSystemMessage(Component.literal("Max upgrade! Attack bonus: " + (tierCounter * focusedStrikesTalent.getDamageIncrease(talentPoints)))); //Debug code
                     }
-                    FocusedStrikesEffect.updateEffectDuration(player, (int) (ComboTime + 40)); // Reset the timer on successful hit
                 }
             });
         }
@@ -393,6 +437,40 @@ public class ModEvents {
                         }
                     }
                 });
+            }
+        }
+
+        VineWhipTalent vineWhipTalent = new VineWhipTalent();
+        if (vineWhipTalent.isActive(player)){
+            player.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(ability -> {
+                UUID targetUUID = target.getUUID();
+                long currentTime = System.currentTimeMillis();
+                long lastRootedTime = ability.getLastRootedTime(targetUUID);
+                double rootDuration = 20 * vineWhipTalent.getRootDuration(vineWhipTalent.getPoints(player));
+
+                if (currentTime - lastRootedTime >= 15000) {
+                    EffectUtils.applyRootedEffect(player, target, (int) rootDuration, 0);
+                    ability.setLastRootedTime(targetUUID, currentTime);
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
+        MobEffectInstance currentRootedEffect = entity.getEffect(CoreEffects.ROOTED.get());
+        if (currentRootedEffect != null) {
+            UUID playerUUID = EffectUtils.getRootingPlayerUUID(entity);
+            if (playerUUID != null) {
+                Player player = entity.level.getPlayerByUUID(playerUUID);
+                VineWhipTalent vineWhipTalent = new VineWhipTalent();
+                if (player != null && vineWhipTalent.isActive(player)) {
+                    double rootDuration = 20 * vineWhipTalent.getRootDuration(vineWhipTalent.getPoints(player));
+                    int swiftnessAmplifier = vineWhipTalent.getSwiftnessAmplifier(vineWhipTalent.getPoints(player));
+                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, (int) rootDuration, swiftnessAmplifier));
+                    EffectUtils.clearRootingPlayer(entity);
+                }
             }
         }
     }
@@ -451,7 +529,7 @@ public class ModEvents {
                     if (target == playerAbility.getTargetEntity()){
                         playerAbility.setTaunting(false);
                         playerAbility.setTargetEntity(null);
-                        player.sendSystemMessage(Component.literal("Cleared taunted target! Target: " + playerAbility.getTargetEntity()));
+                        //player.sendSystemMessage(Component.literal("Cleared taunted target! Target: " + playerAbility.getTargetEntity()));
                     }
                 });
 
@@ -468,6 +546,7 @@ public class ModEvents {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER) {
             ServerPlayer serverPlayer = (ServerPlayer) event.player;
+            if (event.phase == TickEvent.Phase.START) {
             serverPlayer.getCapability(PlayerClassProvider.PLAYER_RPGCLASS).ifPresent(playerClass -> {
                 String className = playerClass.getRpgClass();
                 String subclassName = playerClass.getRpgSubclass();
@@ -493,7 +572,7 @@ public class ModEvents {
                             mage.equals(className) ||
                                     paladin.equals(subclassName) && new PathOfThePaladinSubclass().isActive(serverPlayer));
 
-                    double deltaTime = 1.0 / 40.0; //1 second is 40 ticks due to double counting
+                    double deltaTime = 1.0 / 20.0; //1 second is 40 ticks due to double counting // Nevermind? I guess I fixed the double ticking
                     playerResource.updateRechargeRates(deltaTime);
 
                     ModNetworking.sendToPlayer(
@@ -505,7 +584,7 @@ public class ModEvents {
                                     playerResource.getEnergy(),
                                     playerResource.getMana()), serverPlayer);
 
-                    if (paladin.equals(subclassName) && new PathOfThePaladinSubclass().isActive(serverPlayer)){
+                    if (paladin.equals(subclassName) && new PathOfThePaladinSubclass().isActive(serverPlayer)) {
                         //serverPlayer.sendSystemMessage(Component.literal("You're a paladin! I just send your mana. You have " + playerResource.getMana() + "/" + playerResource.getMaxMana()));
                     }
                 });
@@ -528,10 +607,47 @@ public class ModEvents {
                     }
                 });
             }
+        }
 
             if (event.phase == TickEvent.Phase.END) {
+                AttributeInstance dodgeChanceAttribute = serverPlayer.getAttribute(CoreAttributes.DODGE_CHANCE.get());
+                if (dodgeChanceAttribute != null) {
+                    double dodgeChance = dodgeChanceAttribute.getValue();
+                    //serverPlayer.sendSystemMessage(Component.literal("Current dodge chance: " + dodgeChance + "%")); // debug code
+                } else {
+                    //serverPlayer.sendSystemMessage(Component.literal("Dodge chance attribute not found!")); // debug code
+                }
+
+                SteadyBreathingTalent steadyBreathingTalent = new SteadyBreathingTalent();
+                if (steadyBreathingTalent.isActive(serverPlayer)) {
+                    serverPlayer.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {
+                        if (!serverPlayer.isCrouching()) {
+                            playerAbility.resetSteadyBreathing();
+                            if (serverPlayer.hasEffect(ModEffects.STEADY_BREATHING.get())) {
+                                serverPlayer.removeEffect(ModEffects.STEADY_BREATHING.get());
+                            }
+                            return;
+                        }
+
+                        // Increment idle ticks and add a stack if the player remains still
+                        playerAbility.incrementSteadyBreathingIdleTicks();
+                        if (playerAbility.getSteadyBreathingIdleTicks() >= 40) {
+                            playerAbility.incrementSteadyBreathingStacks();
+                            playerAbility.setSteadyBreathingIdleTicks(0); // Reset idle ticks after gaining a stack
+                            serverPlayer.sendSystemMessage(Component.literal("Gained a Steady Breathing stack! Current stacks: " + playerAbility.getSteadyBreathingStacks())); // Debug message
+
+                            if (!serverPlayer.hasEffect(ModEffects.STEADY_BREATHING.get())) {
+                                serverPlayer.addEffect(new MobEffectInstance(ModEffects.STEADY_BREATHING.get(), 100, playerAbility.getSteadyBreathingStacks() - 1));
+                            } else {
+                                SteadyBreathingEffect.updateEffectDuration(serverPlayer, 100); // Refresh duration
+                            }
+                        }
+                    });
+                }
+
                 //Charge logic
-                serverPlayer.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbilities -> {
+                serverPlayer.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbilities ->
+                        serverPlayer.getCapability(PlayerTargetingProvider.PLAYER_TARGET).ifPresent(targetData -> {
                     if (playerAbilities.isCharging()) {
                         if (serverPlayer.isShiftKeyDown()) {
                             playerAbilities.setCharging(false);
@@ -540,7 +656,13 @@ public class ModEvents {
 
                         ClientEvents.showChargeCancelMessage = true;
 
-                        Entity targetEntity = TargetingUtils.getTarget(serverPlayer);
+                        LivingEntity targetEntity;
+                        if (targetData.isLockedOn()){
+                            targetEntity = targetData.getLockedTarget();
+                        } else {
+                            targetEntity = TargetingUtils.getTarget(serverPlayer);
+                        }
+
                         if (targetEntity == null) {
                             playerAbilities.setCharging(false);
                             ClientEvents.showChargeCancelMessage = false;
@@ -619,7 +741,7 @@ public class ModEvents {
                                 }
                             }
                             //if (isOnGround) {
-                                spawnSmokeParticles(serverPlayer);
+                            spawnSmokeParticles(serverPlayer);
                             //}
 
                             serverPlayer.setDeltaMovement(motion);
@@ -646,7 +768,7 @@ public class ModEvents {
                     } else {
                         ClientEvents.showChargeCancelMessage = false;
                     }
-                });
+                }));
 
                 //Stampede Logic
                 serverPlayer.getCapability(PlayerAbilityProvider.PLAYER_ABILITY).ifPresent(playerAbility -> {

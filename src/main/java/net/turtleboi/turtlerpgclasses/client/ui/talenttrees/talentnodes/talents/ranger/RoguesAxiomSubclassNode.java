@@ -9,6 +9,7 @@ import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.ActiveTa
 import net.turtleboi.turtlerpgclasses.client.ui.talenttrees.talentnodes.StatTalentButton;
 import net.turtleboi.turtlerpgclasses.rpg.talents.Talent;
 import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.BeastmastersAxiomSubclass;
+import net.turtleboi.turtlerpgclasses.rpg.talents.rangerTalents.RoguesAxiomSubclass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class RoguesAxiomSubclassNode extends ActiveTalentButton {
 
     @Override
     public List<Component> generateDynamicTooltip() {
-        if (talentClass instanceof BeastmastersAxiomSubclass talent) {
+        if (talentClass instanceof RoguesAxiomSubclass talent) {
             List<Component> tooltip = new ArrayList<>();
             String talentName = talent.getName();
             int currentPoints = getCurrentPoints();

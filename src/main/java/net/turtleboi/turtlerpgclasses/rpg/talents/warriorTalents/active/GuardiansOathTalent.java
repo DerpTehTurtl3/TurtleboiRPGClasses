@@ -65,7 +65,7 @@ public class GuardiansOathTalent extends ActiveAbility {
         level.getEntitiesOfClass(Player.class, aabb).forEach(ally -> {
             if (PartyUtils.isAlly((ServerPlayer) player, (ServerPlayer) ally) || ally == player) {
                 if (!ally.hasEffect(ModEffects.GUARDIANS_OATH.get())) {
-                    ally.addEffect(new MobEffectInstance(ModEffects.GUARDIANS_OATH.get(), 60, 0));
+                    ally.addEffect(new MobEffectInstance(ModEffects.GUARDIANS_OATH.get(), 60, 0, true, true, true));
                 } else {
                     GuardiansOathEffect.updateEffectDuration(player, 60);
                 }
